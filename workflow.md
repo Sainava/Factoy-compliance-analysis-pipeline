@@ -1,10 +1,10 @@
 # Factory Compliance Assistant — Workflow
 
-This document explains the end‑to‑end workflow for AI‑powered compliance analysis, shows how each frontend feature is achieved, and clearly calls out what is feasible now vs. what needs additional work or is not feasible with the current workflow.
+This document explains the end-to-end workflow for AI-powered compliance analysis, shows how each frontend feature is achieved, and clearly calls out what is feasible now vs. what needs additional work or is not feasible with the current workflow.
 
 ---
 
-## 1) High‑Level Flow (Batch video — standard and 360°)
+## 1) High-Level Flow (Batch video — standard and 360°)
 
 ```mermaid
 flowchart LR
@@ -63,26 +63,26 @@ sequenceDiagram
 
 ## 3) Frontend Feature → How It’s Achieved
 
-- Upload (\`/video-upload\`)
+- **Upload** (`/video-upload`)
   - Accepts MP4/MOV/AVI and flags 360° videos.
   - Calls `POST /analyze` with `{ is360, industry, file|url }`.
 
-- Processing (\`/processing\`)
+- **Processing** (`/processing`)
   - Polls `GET /status/{jobId}`.
   - Stages reported by backend: `preprocess → detect → track → rules → report`.
   - Progress (0–100) computed server-side; streamed as SSE/WebSocket or simple polling.
 
-- Results (\`/results\`)
+- **Results** (`/results`)
   - Fetches `GET /results/{jobId}`.
   - Overlays: Uses `bboxPct: [x,y,w,h]` (percentages) so boxes scale correctly with responsive player.
   - Timeline: Uses `timeline[]` markers with `timestampSec` and `severity`.
   - Thumbnails/Clips: Displays `evidence.thumbUrl` and `evidence.clipUrl` for each violation.
 
-- Report (\`/report\`)
+- **Report** (`/report`)
   - Renders `overallScore` + violation breakdown + evidence links.
   - Exports: PDF/CSV generated client-side or requested from API as pre-rendered assets.
 
-- Industry Packs (\`/industry-pack\`)
+- **Industry Packs** (`/industry-pack`)
   - Frontend selects industry; passes value to `/analyze`.
   - Backend activates rule sets accordingly (foundation + specialization of chosen industry).
 
@@ -90,15 +90,15 @@ sequenceDiagram
 
 ## 4) Minimal, Clear API (Contract)
 
-- POST `/analyze`
-  - Req: `{ videoUrl? string, file? multipart, is360: boolean, industry: 'general'|'pharma'|'food'|'electronics'|'chemicals'|'auto' }`
-  - Res: `{ jobId: string }`
+- **POST** `/analyze`
+  - **Request**: `{ videoUrl? string, file? multipart, is360: boolean, industry: 'general'|'pharma'|'food'|'electronics'|'chemicals'|'auto' }`
+  - **Response**: `{ jobId: string }`
 
-- GET `/status/{jobId}`
-  - Res: `{ stage: 'preprocess'|'detect'|'track'|'rules'|'report'|'done'|'error', progress: number, message?: string }`
+- **GET** `/status/{jobId}`
+  - **Response**: `{ stage: 'preprocess'|'detect'|'track'|'rules'|'report'|'done'|'error', progress: number, message?: string }`
 
-- GET `/results/{jobId}`
-  - Res:
+- **GET** `/results/{jobId}`
+  - **Response**:
     ```json
     {
       "overallScore": 94.5,
@@ -122,7 +122,7 @@ sequenceDiagram
     }
     ```
 
-Notes:
+**Notes:**
 - Percent-based boxes ensure overlay correctness in responsive UI.
 - Evidence URLs plug directly into Results and Report pages.
 
@@ -138,11 +138,11 @@ Notes:
 
 ## 6) What Exists Today vs. What’s Needed
 
-Current repository (\`compliance_analysis_notebook.ipynb\`) already demonstrates:
+Current repository (`compliance_analysis_notebook.ipynb`) already demonstrates:
 - Video I/O, sampling, basic detection (YOLOv8), pose estimation (MediaPipe), simple rule evaluation, and scoring.
 - Outputs and visuals that align with your dashboard overlays and scoring.
 
-Additions needed to power the dashboard end‑to‑end:
+Additions needed to power the dashboard end-to-end:
 - A production AI inference service (FastAPI) implementing the pipeline and the API above.
 - Model export and optimization (ONNX/TensorRT) for speed; ByteTrack for tracking.
 - Evidence generation (thumbs/clips) and storage layer.
@@ -157,14 +157,14 @@ Additions needed to power the dashboard end‑to‑end:
 |---|---|
 | Analyze standard MP4 walkthroughs | Feasible now (detector + tracker + rules) |
 | Analyze 360° equirectangular videos | Feasible with tiling+merge module |
-| PPE detection (helmet, vest, gloves) | Feasible with targeted fine‑tuning |
+| PPE detection (helmet, vest, gloves) | Feasible with targeted fine-tuning |
 | Exit blockage / obstruction | Feasible with detection + zone masks |
 | Ergonomic posture flags | Feasible (pose on person tracks) |
 | Evidence thumbnails and clips | Feasible (server-side FFmpeg) |
-| Interactive timeline with jump‑to | Feasible (based on timestamps) |
-| Severity‑weighted scoring | Feasible (backend mirrors dashboard logic) |
-| Multi‑industry rule packs | Feasible (activate per `industry`) |
-| Real‑time streaming analysis | Not in current workflow; requires stream ingest & low‑latency optimizations |
+| Interactive timeline with jump-to | Feasible (based on timestamps) |
+| Severity-weighted scoring | Feasible (backend mirrors dashboard logic) |
+| Multi-industry rule packs | Feasible (activate per `industry`) |
+| Real-time streaming analysis | Not in current workflow; requires stream ingest & low-latency optimizations |
 | OCR-based label/sign validation | Not covered here; add OCR (Tesseract/PP-OCR) if required |
 | Full scene 3D reconstruction | Out of scope; not required for MVP |
 
@@ -172,7 +172,7 @@ Additions needed to power the dashboard end‑to‑end:
 
 ## 8) Known Gaps / Not Feasible (as-is)
 
-- True real‑time streaming alerts (sub‑second) — current plan is batch/near‑real‑time per video job.
+- True real-time streaming alerts (sub-second) — current plan is batch/near-real-time per video job.
 - Advanced OCR for inspection tags/labels — separate OCR pipeline not included yet.
 - Complex environment physics or 3D mapping — not required for walkthrough video compliance.
 - Predictive analytics — can be added later once historical data accumulates.
