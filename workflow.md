@@ -8,15 +8,15 @@ This document explains the end-to-end workflow for AI-powered compliance analysi
 
 ```mermaid
 flowchart LR
-  U[User uploads video (MP4/MOV/AVI or 360°)] --> A[Create analysis job]
+  U[User uploads video MP4/MOV/AVI or 360] --> A[Create analysis job]
   A -->|/analyze| Q[Job Queue]
   Q --> S[AI Inference Service]
   S --> P[Preprocess]
-  P --> D[Detect (YOLO / RT-DETR)]
-  D --> T[Track (ByteTrack)]
-  T --> O[Optional Pose (RTMPose/MediaPipe)]
+  P --> D[Detect YOLO / RT-DETR]
+  D --> T[Track ByteTrack]
+  T --> O[Optional Pose RTMPose/MediaPipe]
   O --> R[Rule Engine]
-  R --> E[Evidence (thumbs & clips)]
+  R --> E[Evidence thumbs and clips]
   E --> J[Results JSON]
   J -->|/results/{jobId}| FE[Next.js Dashboard]
   J -->|/status/{jobId}| FE
