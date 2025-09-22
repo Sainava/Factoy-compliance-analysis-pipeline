@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - Compliance Analysis Pipeline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .score-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .grade-badge {
+            font-size: 2rem;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-left: 15px;
+        }
+        
+        .violation-card {
+            border-left: 4px solid #dc3545;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        
+        .violation-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .violation-card.critical {
+            border-left-color: #dc3545;
+        }
+        
+        .violation-card.major {
+            border-left-color: #fd7e14;
+        }
+        
+        .violation-card.minor {
+            border-left-color: #ffc107;
+        }
+        
+        .violation-card.warning {
+            border-left-color: #17a2b8;
+        }
+        
+        .severity-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: -20px;
+            width: 2px;
+            background: #dee2e6;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #007bff;
+        }
+        
+        .timeline-item.critical::after {
+            background: #dc3545;
+        }
+        
+        .timeline-item.major::after {
+            background: #fd7e14;
+        }
+        
+        .timeline-item.minor::after {
+            background: #ffc107;
+        }
+        
+        .evidence-thumbnail {
+            width: 100px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .evidence-thumbnail:hover {
+            transform: scale(1.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .export-buttons {
+            margin-bottom: 30px;
+        }
+        
+        .video-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>
+                Compliance Analysis
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home me-1"></i>
+                    New Analysis
+                </a>
+                <a class="nav-link" href="#" onclick="downloadReport()">
+                    <i class="fas fa-download me-1"></i>
+                    Download Report
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1>Analysis Results</h1>
+                <p class="text-muted mb-0">
+                    Analysis ID: <code>{{ analysis_id }}</code> | 
+                    Industry: <strong>{{ analysis.industry_pack.title() }}</strong> |
+                    Completed: {{ analysis.completed_at[:19] if analysis.completed_at else 'Unknown' }}
+                </p>
+            </div>
+            <div class="export-buttons">
+                <button class="btn btn-outline-primary" onclick="downloadReport()">
+                    <i class="fas fa-file-pdf me-1"></i>
+                    PDF Report
+                </button>
+                <button class="btn btn-outline-success" onclick="downloadJSON()">
+                    <i class="fas fa-file-code me-1"></i>
+                    Raw Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Compliance Score Card -->
+        <div class="score-card">
+            <h2>Compliance Score</h2>
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="score-display">{{ "%.1f"|format(analysis.results.compliance_score.compliance_score) }}</div>
+                <div class="ms-3">
+                    <div class="h4 mb-1">out of 100</div>
+                    <span class="grade-badge badge 
+                        {% if analysis.results.compliance_score.grade == 'A' %}bg-success
+                        {% elif analysis.results.compliance_score.grade == 'B' %}bg-info
+                        {% elif analysis.results.compliance_score.grade == 'C' %}bg-warning
+                        {% elif analysis.results.compliance_score.grade == 'D' %}bg-warning text-dark
+                        {% else %}bg-danger
+                        {% endif %}">
+                        Grade {{ analysis.results.compliance_score.grade }}
+                    </span>
+                </div>
+            </div>
+            <p class="mb-0 mt-3">
+                {% if analysis.results.compliance_score.compliance_score >= 90 %}
+                    Excellent compliance! Minimal violations detected.
+                {% elif analysis.results.compliance_score.compliance_score >= 80 %}
+                    Good compliance with minor issues to address.
+                {% elif analysis.results.compliance_score.compliance_score >= 70 %}
+                    Moderate compliance. Several violations need attention.
+                {% elif analysis.results.compliance_score.compliance_score >= 60 %}
+                    Poor compliance. Immediate action required.
+                {% else %}
+                    Critical compliance issues detected. Urgent intervention needed.
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="row">
+            <!-- Left Column - Statistics & Charts -->
+            <div class="col-lg-8">
+                <!-- Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ analysis.results.compliance_score.total_violations }}</div>
+                        <div class="text-muted">Total Violations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ analysis.results.total_detections }}</div>
+                        <div class="text-muted">Objects Detected</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ "%.1f"|format(analysis.results.video_metadata.duration) }}s</div>
+                        <div class="text-muted">Video Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ "%.1f"|format(analysis.results.processing_time) }}s</div>
+                        <div class="text-muted">Processing Time</div>
+                    </div>
+                </div>
+
+                <!-- Video Information -->
+                <div class="video-info">
+                    <h5><i class="fas fa-video me-2"></i>Video Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Filename:</strong> {{ analysis.video_filename }}<br>
+                            <strong>Type:</strong> {{ analysis.results.video_metadata.video_type }}<br>
+                            <strong>Resolution:</strong> {{ analysis.results.video_metadata.width }}x{{ analysis.results.video_metadata.height }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>FPS:</strong> {{ "%.1f"|format(analysis.results.video_metadata.fps) }}<br>
+                            <strong>Frames:</strong> {{ analysis.results.video_metadata.frame_count }}<br>
+                            <strong>Aspect Ratio:</strong> {{ "%.2f"|format(analysis.results.video_metadata.aspect_ratio) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Violation Breakdown Chart -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Violation Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="violationChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock me-2"></i>Violation Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if analysis.results.timeline %}
+                            {% for event in analysis.results.timeline[:10] %}
+                                <div class="timeline-item {{ event.severity }}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>{{ event.description }}</strong>
+                                            <div class="text-muted small">{{ event.type.replace('_', ' ').title() }}</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="small text-muted">{{ "%.1f"|format(event.timestamp) }}s</div>
+                                            <span class="badge bg-{{ 'danger' if event.severity == 'critical' else 'warning' if event.severity == 'major' else 'secondary' }} severity-badge">
+                                                {{ event.severity }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% if analysis.results.timeline|length > 10 %}
+                                <div class="text-center">
+                                    <small class="text-muted">Showing first 10 of {{ analysis.results.timeline|length }} events</small>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-muted">No violations detected in timeline.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Violations List -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Violations</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                        {% if analysis.results.violations %}
+                            {% for violation in analysis.results.violations %}
+                                <div class="violation-card {{ violation.severity }} card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <span class="badge bg-{{ 'danger' if violation.severity == 'critical' else 'warning' if violation.severity == 'major' else 'secondary' }} severity-badge">
+                                                {{ violation.severity }}
+                                            </span>
+                                            <small class="text-muted">{{ "%.1f"|format(violation.timestamp) }}s</small>
+                                        </div>
+                                        
+                                        <h6 class="card-title">{{ violation.description }}</h6>
+                                        <p class="card-text small text-muted">
+                                            Type: {{ violation.type.replace('_', ' ').title() }}<br>
+                                            Confidence: {{ "%.0f"|format(violation.confidence * 100) }}%
+                                        </p>
+                                        
+                                        {% if violation.evidence %}
+                                            <div class="d-flex gap-2 mt-2">
+                                                {% if violation.evidence.thumbnail %}
+                                                    <img src="{{ violation.evidence.thumbnail }}" 
+                                                         class="evidence-thumbnail" 
+                                                         alt="Evidence thumbnail"
+                                                         onclick="viewEvidence('{{ violation.id }}')">
+                                                {% endif %}
+                                                {% if violation.evidence.clip %}
+                                                    <button class="btn btn-sm btn-outline-primary" 
+                                                            onclick="playClip('{{ violation.evidence.clip }}')">
+                                                        <i class="fas fa-play me-1"></i>Play Clip
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                                <h6>No Violations Detected</h6>
+                                <p class="text-muted small">This video shows excellent compliance!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evidence Modal -->
+    <div class="modal fade" id="evidenceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Violation Evidence Clip</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="videoLoadingSpinner" class="text-center mb-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading video...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading evidence clip...</p>
+                    </div>
+                    <div id="videoError" class="alert alert-warning" style="display: none;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Video playback error:</strong> <span id="videoErrorMessage"></span>
+                        <br><br>
+                        <a id="videoDownloadLink" href="#" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="fas fa-download me-1"></i>Download Video
+                        </a>
+                    </div>
+                    <video id="evidenceVideo" controls preload="metadata" style="width: 100%; max-height: 400px;">
+                        <source id="videoSource" src="" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a id="downloadVideoBtn" href="#" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-download me-1"></i>Download Clip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Chart.js visualization
+        const ctx = document.getElementById('violationChart').getContext('2d');
+        const violationCounts = {{ analysis.results.compliance_score.violation_counts | tojson }};
+        
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Critical', 'Major', 'Minor', 'Warning'],
+                datasets: [{
+                    data: [
+                        violationCounts.critical,
+                        violationCounts.major,
+                        violationCounts.minor,
+                        violationCounts.warning
+                    ],
+                    backgroundColor: [
+                        '#dc3545',
+                        '#fd7e14',
+                        '#ffc107',
+                        '#17a2b8'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Evidence functions
+        function viewEvidence(violationId) {
+            // Implementation for viewing evidence
+            console.log('Viewing evidence for violation:', violationId);
+        }
+        
+        function playClip(clipPath) {
+            console.log('playClip called with:', clipPath);
+            
+            const modal = new bootstrap.Modal(document.getElementById('evidenceModal'));
+            const video = document.getElementById('evidenceVideo');
+            const videoSource = document.getElementById('videoSource');
+            const loadingSpinner = document.getElementById('videoLoadingSpinner');
+            const videoError = document.getElementById('videoError');
+            const downloadBtn = document.getElementById('downloadVideoBtn');
+            const downloadLink = document.getElementById('videoDownloadLink');
+            
+            // Show loading and hide errors
+            loadingSpinner.style.display = 'block';
+            videoError.style.display = 'none';
+            video.style.display = 'none';
+            
+            // Reset video
+            video.pause();
+            video.currentTime = 0;
+            
+            // Set up event handlers before loading
+            video.onloadstart = function() {
+                console.log('Video loading started');
+            };
+            
+            video.oncanplay = function() {
+                console.log('Video can start playing');
+                loadingSpinner.style.display = 'none';
+                video.style.display = 'block';
+            };
+            
+            video.onerror = function(e) {
+                console.error('Video error:', e);
+                console.error('Video error details:', video.error);
+                loadingSpinner.style.display = 'none';
+                video.style.display = 'none';
+                videoError.style.display = 'block';
+                document.getElementById('videoErrorMessage').textContent = 
+                    'Failed to load video. The file may not exist or be corrupted.';
+                downloadLink.href = clipPath;
+            };
+            
+            video.onloadeddata = function() {
+                console.log('Video data loaded, duration:', video.duration);
+                if (video.duration && video.duration > 0) {
+                    video.play().catch(function(error) {
+                        console.warn('Auto-play failed:', error);
+                        // Auto-play might be blocked, that's okay
+                    });
+                }
+            };
+            
+            // Set the source and download links
+            videoSource.src = clipPath;
+            downloadBtn.href = clipPath;
+            downloadLink.href = clipPath;
+            
+            // Load the video
+            video.load();
+            
+            // Show the modal
+            modal.show();
+        }
+        
+        // Export functions
+        async function downloadReport() {
+            try {
+                const response = await fetch(`/api/analysis/{{ analysis_id }}/results`);
+                const data = await response.json();
+                
+                // Create a simple text report
+                let report = `COMPLIANCE ANALYSIS REPORT\n`;
+                report += `================================\n\n`;
+                report += `Analysis ID: {{ analysis_id }}\n`;
+                report += `Date: {{ analysis.completed_at[:19] if analysis.completed_at else 'Unknown' }}\n`;
+                report += `Industry: {{ analysis.industry_pack.title() }}\n`;
+                report += `Video: {{ analysis.video_filename }}\n\n`;
+                
+                report += `COMPLIANCE SCORE: ${data.compliance_score.compliance_score}/100 (Grade ${data.compliance_score.grade})\n\n`;
+                
+                report += `VIOLATIONS SUMMARY:\n`;
+                report += `- Critical: ${data.compliance_score.violation_counts.critical}\n`;
+                report += `- Major: ${data.compliance_score.violation_counts.major}\n`;
+                report += `- Minor: ${data.compliance_score.violation_counts.minor}\n`;
+                report += `- Warning: ${data.compliance_score.violation_counts.warning}\n\n`;
+                
+                if (data.violations.length > 0) {
+                    report += `DETAILED VIOLATIONS:\n`;
+                    data.violations.forEach((v, i) => {
+                        report += `${i+1}. ${v.description} (${v.severity}) at ${v.timestamp}s\n`;
+                    });
+                }
+                
+                // Download as text file
+                const blob = new Blob([report], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `compliance_report_{{ analysis_id }}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                console.error('Failed to download report:', error);
+                alert('Failed to download report');
+            }
+        }
+        
+        async function downloadJSON() {
+            try {
+                const response = await fetch(`/api/analysis/{{ analysis_id }}/results`);
+                const data = await response.json();
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `compliance_data_{{ analysis_id }}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                console.error('Failed to download JSON:', error);
+                alert('Failed to download data');
+            }
+        }
+    </script>
+</body>
+</html>

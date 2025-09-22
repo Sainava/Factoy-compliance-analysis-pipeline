@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Analysis Pipeline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 60px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #0056b3;
+            background-color: #f8f9fa;
+        }
+        
+        .upload-area.dragover {
+            border-color: #28a745;
+            background-color: #e6ffe6;
+        }
+        
+        .industry-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .industry-card:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        
+        .industry-card.selected {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+        
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 50px;
+        }
+        
+        .demo-video {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>
+                Compliance Analysis
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#features">Features</a>
+                <a class="nav-link" href="#upload">Upload</a>
+                <a class="nav-link" href="/docs" target="_blank">API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">AI-Powered Compliance Analysis</h1>
+            <p class="lead mb-4">
+                Automatically detect safety violations, PPE compliance, and workplace hazards using advanced computer vision
+            </p>
+            <a href="#upload" class="btn btn-light btn-lg">
+                <i class="fas fa-upload me-2"></i>
+                Start Analysis
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-lg-12">
+                    <h2 class="fw-bold">Comprehensive Safety Analysis</h2>
+                    <p class="text-muted">Multi-modal AI approach for complete workplace compliance</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-eye feature-icon"></i>
+                        <h5>Object Detection</h5>
+                        <p class="text-muted">YOLOv8-powered detection of workers, PPE, and safety equipment</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-route feature-icon"></i>
+                        <h5>Multi-Object Tracking</h5>
+                        <p class="text-muted">DeepSORT tracking for temporal analysis and violation persistence</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-running feature-icon"></i>
+                        <h5>Pose Analysis</h5>
+                        <p class="text-muted">MediaPipe pose estimation for ergonomic and posture violations</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-clipboard-check feature-icon"></i>
+                        <h5>Rule Engine</h5>
+                        <p class="text-muted">Industry-specific compliance rules with severity scoring</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                Upload Video for Analysis
+                            </h4>
+                        </div>
+                        
+                        <div class="card-body">
+                            <!-- Industry Pack Selection -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Select Industry Pack:</h6>
+                                <div id="industry-packs">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Configuration -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Analysis Configuration:</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="confidence" class="form-label">
+                                            Detection Confidence: <span id="confidence-value">0.45</span>
+                                        </label>
+                                        <input type="range" class="form-range" id="confidence" 
+                                               min="0.1" max="0.9" step="0.05" value="0.45">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload Area -->
+                            <div class="upload-area" id="upload-area">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                                <h5>Drop your video here or click to browse</h5>
+                                <p class="text-muted">Supports MP4, AVI, MOV, WEBM formats<br>
+                                   Standard and 360° videos supported</p>
+                                <input type="file" id="video-file" accept="video/*" style="display: none;">
+                            </div>
+
+                            <!-- Progress Section -->
+                            <div class="progress-container" id="progress-container">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Processing video...</span>
+                                    <span id="progress-text">0%</span>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         id="progress-bar" style="width: 0%"></div>
+                                </div>
+                                <div class="text-center">
+                                    <small class="text-muted" id="status-message">Initializing analysis...</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3 class="fw-bold mb-4">See It In Action</h3>
+                    <p class="mb-4">
+                        Our AI pipeline analyzes industrial videos to identify safety violations, 
+                        track worker compliance, and generate detailed reports with evidence clips.
+                    </p>
+                    
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Real-time detection</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Evidence generation</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Compliance scoring</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Detailed reports</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <img src="https://via.placeholder.com/500x300/007bff/ffffff?text=Demo+Video" 
+                             class="demo-video" alt="Demo Video">
+                        <p class="small text-muted mt-2">
+                            Sample analysis of manufacturing facility
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Compliance Analysis Pipeline. AI-powered safety monitoring.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // State variables
+        let selectedIndustry = 'manufacturing';
+        let analysisId = null;
+        
+        // DOM elements
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('video-file');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const statusMessage = document.getElementById('status-message');
+        const confidenceSlider = document.getElementById('confidence');
+        const confidenceValue = document.getElementById('confidence-value');
+        
+        // Load industry packs
+        async function loadIndustryPacks() {
+            try {
+                const response = await fetch('/api/industry-packs');
+                const data = await response.json();
+                
+                const container = document.getElementById('industry-packs');
+                container.innerHTML = '';
+                
+                data.industry_packs.forEach(pack => {
+                    const card = document.createElement('div');
+                    card.className = `industry-card ${pack.id === selectedIndustry ? 'selected' : ''}`;
+                    card.onclick = () => selectIndustry(pack.id);
+                    
+                    card.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">${pack.name}</h6>
+                                <small class="text-muted">${pack.description}</small>
+                            </div>
+                            <i class="fas fa-check-circle text-success" style="display: ${pack.id === selectedIndustry ? 'block' : 'none'}"></i>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Failed to load industry packs:', error);
+            }
+        }
+        
+        function selectIndustry(industryId) {
+            selectedIndustry = industryId;
+            
+            // Update UI
+            document.querySelectorAll('.industry-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('.fa-check-circle').style.display = 'none';
+            });
+            
+            event.target.closest('.industry-card').classList.add('selected');
+            event.target.closest('.industry-card').querySelector('.fa-check-circle').style.display = 'block';
+        }
+        
+        // Confidence slider
+        confidenceSlider.addEventListener('input', function() {
+            confidenceValue.textContent = this.value;
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelection(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+        
+        async function handleFileSelection(file) {
+            // Validate file type
+            if (!file.type.startsWith('video/')) {
+                alert('Please select a video file');
+                return;
+            }
+            
+            // Prepare upload
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('industry_pack', selectedIndustry);
+            formData.append('confidence_threshold', confidenceSlider.value);
+            
+            // Show progress
+            progressContainer.style.display = 'block';
+            uploadArea.style.display = 'none';
+            
+            try {
+                // Upload and start analysis
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+                
+                const result = await response.json();
+                analysisId = result.analysis_id;
+                
+                // Start polling for progress
+                pollAnalysisStatus();
+                
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert('Upload failed. Please try again.');
+                resetUploadState();
+            }
+        }
+        
+        async function pollAnalysisStatus() {
+            if (!analysisId) return;
+            
+            try {
+                const response = await fetch(`/api/analysis/${analysisId}/status`);
+                const data = await response.json();
+                
+                // Update progress
+                updateProgress(data.progress || 0, data.status);
+                
+                if (data.status === 'completed') {
+                    // Redirect to results
+                    setTimeout(() => {
+                        window.location.href = `/analysis/${analysisId}`;
+                    }, 1000);
+                } else if (data.status === 'failed') {
+                    alert('Analysis failed: ' + (data.error || 'Unknown error'));
+                    resetUploadState();
+                } else {
+                    // Continue polling
+                    setTimeout(pollAnalysisStatus, 2000);
+                }
+                
+            } catch (error) {
+                console.error('Failed to check status:', error);
+                setTimeout(pollAnalysisStatus, 5000); // Retry after 5 seconds
+            }
+        }
+        
+        function updateProgress(progress, status) {
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${progress}%`;
+            
+            const messages = {
+                'processing': 'Uploading video...',
+                'analyzing': 'Running AI analysis...',
+                'completed': 'Analysis complete! Redirecting...',
+                'failed': 'Analysis failed'
+            };
+            
+            statusMessage.textContent = messages[status] || 'Processing...';
+        }
+        
+        function resetUploadState() {
+            progressContainer.style.display = 'none';
+            uploadArea.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            analysisId = null;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadIndustryPacks();
+        });
+    </script>
+</body>
+</html>
