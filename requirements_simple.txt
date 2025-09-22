@@ -1,0 +1,29 @@
+# Essential packages for compliance analysis pipeline
+# Core ML and Computer Vision
+ultralytics
+opencv-python
+numpy>=1.21.0
+pandas>=1.5.0
+pillow>=9.0.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Optional packages (install manually if needed)
+# pytesseract>=0.3.10  # For OCR (requires tesseract system install)
+# mediapipe>=0.10.0    # For pose estimation
+# py360convert>=0.1.0  # For 360° video processing
+# deep_sort_realtime>=1.2.0  # For tracking
+# reportlab>=3.6.0     # For PDF generation
+# streamlit>=1.28.0    # For dashboard
+# spacy>=3.4.0         # For NLP
+# transformers>=4.21.0 # For advanced NLP
+# scikit-learn>=1.1.0  # For metrics
+# plotly>=5.0.0        # For interactive plots
+# tqdm>=4.64.0         # For progress bars
+
+# Basic packages that should work
+jupyter
+ipython
+tqdm

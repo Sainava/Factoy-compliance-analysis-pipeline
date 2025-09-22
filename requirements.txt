@@ -1,0 +1,44 @@
+# Python packages for Japan AI Model - Compliance Analysis Pipeline
+
+# Core computer vision and ML
+ultralytics>=8.0.0
+opencv-python-headless>=4.8.0
+numpy>=1.21.0
+pandas>=1.5.0
+pillow>=9.0.0
+matplotlib>=3.5.0
+
+# OCR and text processing
+pytesseract>=0.3.10
+
+# Report generation
+reportlab>=3.6.0
+fpdf>=2.5.0
+
+# Dashboard and visualization
+streamlit>=1.25.0
+plotly>=5.14.0
+seaborn>=0.11.0
+
+# Pose estimation and tracking
+mediapipe>=0.10.0
+deep-sort-realtime>=1.2.0
+
+# 360 video processing
+py360convert>=0.1.0
+
+# NLP for rule parsing (optional but recommended)
+spacy>=3.6.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+
+# Additional utilities
+tqdm>=4.65.0
+scikit-learn>=1.3.0
+scipy>=1.11.0
+requests>=2.31.0
+
+# Development and testing (optional)
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+ipywidgets>=8.0.0
