@@ -1,32 +1,220 @@
-# Factory Compliance Assistant — Workflow
+# Japan AI Model - Compliance Analysis Pipeline Workflow
 
-This document explains the end-to-end workflow for AI-powered compliance analysis, shows how each frontend feature is achieved, and clearly calls out what is feasible now vs. what needs additional work or is not feasible with the current workflow.
+This document explains the actual implementation workflow for the AI-powered compliance analysis pipeline, based on the current Jupyter notebook implementation.
 
 ---
 
-## 1) High-Level Flow (Batch video — standard and 360°)
+## 1) Actual System Architecture
 
-```mermaid
-flowchart LR
-  U[User uploads video MP4/MOV/AVI or 360] --> A[Create analysis job]
-  A -->|/analyze| Q[Job Queue]
-  Q --> S[AI Inference Service]
-  S --> P[Preprocess]
-  P --> D[Detect YOLO / RT-DETR]
-  D --> T[Track ByteTrack]
-  T --> O[Optional Pose RTMPose/MediaPipe]
-  O --> R[Rule Engine]
-  R --> E[Evidence thumbs and clips]
-  E --> J[Results JSON]
-  J -->|/results/{jobId}| FE[Next.js Dashboard]
-  J -->|/status/{jobId}| FE
+The current implementation is a **Jupyter notebook-based analysis pipeline** that processes video files locally:
+
+```
+Input Video (MP4/360°) 
+    ↓
+Video Preprocessing & Frame Sampling
+    ↓  
+Object Detection (YOLOv8)
+    ↓
+Tracking & Pose Estimation
+    ↓
+Rule Engine (Industry-Specific)
+    ↓
+Evidence Generation (Clips/Screenshots)
+    ↓
+Compliance Scoring
+    ↓
+Report Generation (PDF/CSV)
+    ↓
+Interactive Dashboard (Streamlit)
 ```
 
-Key points:
-- Handles both standard and 360° videos. 360° frames are tiled with overlap, detected per tile, and merged back to global coordinates.
-- Async job pattern: frontend polls `/status/{jobId}` and fetches `/results/{jobId}` when complete.
+## 2) Current Implementation Details
+
+### Video Input & Preprocessing
+- **Supported formats**: MP4, MOV, AVI (standard and 360° equirectangular)
+- **360° Processing**: Converts equirectangular to perspective tiles using mathematical reprojection
+- **Frame sampling**: Configurable FPS (default 2 FPS for efficiency)
+- **Privacy**: Optional face blurring for compliance
+
+### Detection & Analysis
+- **Object Detection**: YOLOv8 (configurable models: yolov8n.pt to yolov8x.pt)
+- **Tracking**: DeepSort for person tracking across frames
+- **Pose Estimation**: MediaPipe for ergonomic analysis
+- **OCR**: Tesseract for text detection (signs, labels)
+
+### Rule Engine
+- **Industry Packs**: Manufacturing, Food Processing, Chemical, General
+- **Rule Types**: PPE detection, zone compliance, emergency access, ergonomics
+- **Temporal Logic**: Persistence thresholds and confidence scoring
+- **Configurable Weights**: Critical, Major, Minor, Warning severities
+
+### Output Generation
+- **Evidence**: Automatic clip extraction (±3s around violations)
+- **Reports**: PDF compliance reports with scoring breakdown
+- **Data Export**: CSV files with violation details
+- **Dashboard**: Interactive Streamlit interface for visualization
+
+## 3) How to Use the Current System
+
+### Step 1: Setup
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Test the pipeline
+python test_pipeline.py
+```
+
+### Step 2: Video Analysis
+```bash
+# Open Jupyter notebook
+jupyter notebook compliance_analysis_notebook.ipynb
+
+# Configure in Cell 2:
+VIDEO_PATH = 'data/your-video.mp4'
+INDUSTRY_PACK = 'manufacturing'  # or 'food', 'chemical', 'general'
+```
+
+### Step 3: Run Analysis
+Execute cells sequentially:
+1. **Cell 1**: Library setup and imports
+2. **Cell 2**: Configuration (video path, industry pack, parameters)
+3. **Cell 3**: Video preprocessing and frame sampling
+4. **Cell 4**: 360° reprojection (if applicable)
+5. **Cell 5-8**: Object detection and tracking
+6. **Cell 9-10**: Pose estimation and OCR
+7. **Cell 11-12**: Rule engine evaluation
+8. **Cell 13-14**: Compliance scoring
+9. **Cell 15**: Report generation
+10. **Cell 16**: Dashboard creation
+
+### Step 4: Review Results
+```bash
+# Generated outputs in:
+outputs/reports/compliance_report.pdf    # PDF report
+outputs/reports/violations.csv          # Violation details
+outputs/scorecard.json                  # Scoring data
+outputs/evidence/                       # Screenshots
+outputs/clips/                          # Video clips
+outputs/compliance_dashboard.py         # Streamlit app
+
+# Launch interactive dashboard
+streamlit run outputs/compliance_dashboard.py
+```
+
+## 4) Configuration Options
+
+### Industry Pack Settings
+```python
+INDUSTRY_PACK = 'manufacturing'  # Options:
+# - 'food': Hairnet, gloves, temperature compliance
+# - 'manufacturing': PPE, safety equipment, workstation
+# - 'chemical': Protective equipment, spill detection
+# - 'general': Emergency exits, basic safety protocols
+```
+
+### Performance Settings
+```python
+SAMPLE_FPS = 2                    # Frames per second to analyze
+CONFIDENCE_THRESHOLD = 0.45       # Detection confidence
+DETECTOR_MODEL = 'yolov8n.pt'     # Model size (n/s/m/l/x)
+FRAME_SKIP = 30                   # Skip frames for demo speed
+```
+
+### 360° Video Settings
+```python
+ENABLE_360_PROCESSING = True      # Enable 360° processing
+N_TILES_360 = 4                   # Number of perspective views
+TILE_FOV = 90                     # Field of view per tile
+```
+
+## 5) What Works vs What's Planned
+
+### ✅ Currently Implemented
+- Local video file processing (MP4, 360°)
+- YOLOv8 object detection with tracking
+- Industry-specific rule evaluation
+- Evidence clip and screenshot generation
+- PDF report generation with scoring
+- Interactive Streamlit dashboard
+- 360° equirectangular video support
+- Configurable industry compliance packs
+
+### 🚧 Demo Limitations
+- **Mock detections**: Uses pre-trained YOLO models (not factory-trained)
+- **Batch processing only**: No real-time streaming
+- **Local execution**: No web API or cloud deployment
+- **Limited OCR**: Basic text detection without specialized training
+
+### 📋 Future Development Needed
+- **Production API**: REST endpoints for remote processing
+- **Real-time streaming**: Live video analysis capability
+- **Custom model training**: Factory-specific detection models
+- **Cloud deployment**: Scalable infrastructure
+- **Advanced OCR**: Specialized text recognition for industrial signs
+- **Database integration**: Historical data storage and analytics
+
+## 6) Key Files and Structure
+
+```
+compliance-analysis-pipeline/
+├── compliance_analysis_notebook.ipynb  # Main analysis pipeline
+├── test_pipeline.py                    # Quick test script
+├── requirements.txt                    # Python dependencies
+├── data/                               # Input video files
+│   └── ssvid.net--Toyota-VR-360-Factory-Tour_v720P.mp4
+├── outputs/                            # Generated results
+│   ├── reports/                        # PDF and CSV reports
+│   ├── evidence/                       # Screenshots
+│   ├── clips/                          # Video clips
+│   └── compliance_dashboard.py         # Streamlit app
+├── rules/                              # Industry rule templates
+├── sops/                               # Sample SOP documents
+└── templates/                          # Report templates
+```
+
+## 7) Performance and Accuracy
+
+### Current Performance
+- **Processing Speed**: ~2-5 minutes per minute of video (depends on hardware)
+- **Memory Usage**: ~2-4GB RAM for typical videos
+- **Model Size**: 6MB (yolov8n) to 136MB (yolov8x)
+
+### Accuracy Expectations
+- **Demo Mode**: Illustrative detections using pre-trained models
+- **Production Requirements**: Custom training needed for factory-specific accuracy
+- **Rule Engine**: Configurable confidence thresholds and temporal persistence
+
+## 8) Technical Architecture
+
+### Core Components
+1. **Video Processor**: OpenCV-based frame extraction and 360° reprojection
+2. **Detection Engine**: YOLOv8 with DeepSort tracking
+3. **Rule Evaluator**: Industry-specific compliance logic
+4. **Evidence Generator**: FFmpeg-based clip extraction
+5. **Scoring System**: Weighted violation assessment
+6. **Report Builder**: ReportLab PDF generation
+7. **Dashboard**: Streamlit interactive interface
+
+### Dependencies
+- **Computer Vision**: OpenCV, Ultralytics YOLOv8
+- **Tracking**: DeepSort, MediaPipe
+- **Reports**: ReportLab, Matplotlib, Plotly
+- **Dashboard**: Streamlit, Pandas
+- **OCR**: Tesseract, PyTesseract
 
 ---
+
+## Quick Start Summary
+
+1. **Install**: `pip install -r requirements.txt`
+2. **Test**: `python test_pipeline.py`  
+3. **Configure**: Update video path and industry pack in notebook Cell 2
+4. **Run**: Execute all notebook cells sequentially
+5. **Review**: Check `outputs/` directory for results
+6. **Dashboard**: `streamlit run outputs/compliance_dashboard.py`
+
+This workflow reflects the **actual current implementation** - a comprehensive Jupyter notebook pipeline for compliance analysis of factory videos.
 
 ## 2) Component Flow (AI Inference Service)
 
