@@ -1,3 +1,63 @@
+# Visual Workflow: Nodes and Edges
+
+This file describes the pipeline strictly as nodes and edges. It contains:
+- A single Mermaid flowchart showing the DAG
+- A plain adjacency list for clarity
+
+---
+
+## Graph
+
+```mermaid
+flowchart TD
+    A[Video Input] --> B[Preprocess]
+    B --> C[Detection]
+    C --> D[Tracking]
+    D --> E[Pose]
+    E --> F[Rules]
+    F --> G[Temporal]
+    G --> H[Evidence]
+    H --> I[Scoring]
+    I --> J[Output]
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#e8f5e8
+    style E fill:#e3f2fd
+    style F fill:#e8f5e8
+    style G fill:#e3f2fd
+    style H fill:#e8f5e8
+    style I fill:#e3f2fd
+    style J fill:#e8f5e8
+```
+
+---
+
+## Adjacency List
+
+```
+A -> B
+B -> C
+C -> D
+D -> E
+E -> F
+F -> G
+G -> H
+H -> I
+I -> J
+```
+
+---
+
+Legend
+- Detection = YOLOv8
+- Tracking = DeepSORT
+- Pose = MediaPipe
+- Rules = Rule Engine
+- Temporal = Temporal reasoning
+- Evidence = Evidence generation H264 avc1
+- Output = JSON and UI
 # Compliance Analysis Workflow (Visual)# Compliance Analysis Workflow (Visual)
 
 
