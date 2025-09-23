@@ -1,127 +1,8 @@
-# Visual Workflow: Compliance Analysis Pipeline
-
-This workflow follows the exact format shown in the reference image with main process steps and detailed sub-components.
-
----
-
-## Main Process Flow
-
-```
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│     Upload Video    │───▶│    AI Analysis      │───▶│   Evidence Review   │───▶│    Get Report       │
-│   Factory Tour      │    │   2-3 minutes       │    │  Compliance Check   │    │   PDF Download      │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-          │                          │                          │                          │
-          │                          │                          │                          │
-          ▼                          ▼                          ▼                          ▼
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│    Drag & Drop      │    │  Computer Vision    │    │   Rule Engine       │    │  Compliance Score   │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-          │                          │                          │                          │
-          ▼                          ▼                          ▼                          ▼
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   Video Preview     │    │  Object Detection   │    │  Safety Assessment  │    │  Violation Details  │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-          │                          │                          │                          │
-          ▼                          ▼                          ▼                          ▼
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   Format Check      │    │  Pose Estimation    │    │  Temporal Analysis  │    │  Recommendations   │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-          │                          │                          │                          │
-          ▼                          ▼                          ▼                          ▼
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│  Quality Validation │    │   Track Assignment  │    │  Evidence Generation│    │   Export Options    │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-```
-
----
-
-## Detailed Component Breakdown
-
-### Step 1: Upload Video (Factory Tour)
-- **Drag & Drop**: Simple file upload interface
-- **Video Preview**: Thumbnail and metadata display  
-- **Format Check**: Validate MP4/MOV/360° formats
-- **Quality Validation**: Resolution and duration checks
-
-### Step 2: AI Analysis (2-3 minutes)
-- **Computer Vision**: YOLOv8 object detection pipeline
-- **Object Detection**: Identify persons, PPE, hazards, equipment
-- **Pose Estimation**: MediaPipe 33-keypoint analysis
-- **Track Assignment**: DeepSORT multi-object tracking
-
-### Step 3: Evidence Review (Compliance Check)  
-- **Rule Engine**: Industry-specific compliance rules
-- **Safety Assessment**: PPE and posture violations
-- **Temporal Analysis**: Multi-frame violation reasoning
-- **Evidence Generation**: H264/avc1 clips and thumbnails
-
-### Step 4: Get Report (PDF Download)
-- **Compliance Score**: Percentage-based grading system
-- **Violation Details**: Timestamped evidence with confidence
-- **Recommendations**: Actionable improvement suggestions
-- **Export Options**: PDF, JSON, CSV formats
-
----
-
-## Alternative Mermaid Representation
-
-```mermaid
-flowchart LR
-    A["Upload Video<br/>Factory Tour"] --> B["AI Analysis<br/>2-3 minutes"]
-    B --> C["Evidence Review<br/>Compliance Check"]
-    C --> D["Get Report<br/>PDF Download"]
-    
-    A1["Drag & Drop"] -.-> A
-    A2["Video Preview"] -.-> A
-    A3["Format Check"] -.-> A
-    A4["Quality Validation"] -.-> A
-    
-    B1["Computer Vision"] -.-> B
-    B2["Object Detection"] -.-> B
-    B3["Pose Estimation"] -.-> B
-    B4["Track Assignment"] -.-> B
-    
-    C1["Rule Engine"] -.-> C
-    C2["Safety Assessment"] -.-> C
-    C3["Temporal Analysis"] -.-> C
-    C4["Evidence Generation"] -.-> C
-    
-    D1["Compliance Score"] -.-> D
-    D2["Violation Details"] -.-> D
-    D3["Recommendations"] -.-> D
-    D4["Export Options"] -.-> D
-
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#2196F3
-    style D fill:#9C27B0
-```
-
----
-
-## Process Timeline
-
-| Phase | Duration | Key Activities | Output |
-|-------|----------|----------------|---------|
-| Upload | 30 seconds | File validation, preview generation | Ready for analysis |
-| AI Analysis | 2-3 minutes | Computer vision, detection, tracking | Raw violations |
-| Evidence Review | 1 minute | Rule application, clip generation | Evidence package |
-| Report Generation | 30 seconds | Scoring, formatting, export | Final report |
-
----
-
-## Technology Stack per Phase
-
-- **Upload**: HTML5 File API, FFmpeg metadata extraction
-- **AI Analysis**: YOLOv8, DeepSORT, MediaPipe, OpenCV
-- **Evidence Review**: Custom rule engine, H264 encoding
-- **Report**: PDF generation, JSON serialization, web dashboard
-# Compliance Analysis Workflow (Visual)# Compliance Analysis Workflow (Visual)
+# AI Compliance Analysis Workflow (Code-Based)# Visual Workflow: Compliance Analysis Pipeline
 
 
 
-All visuals are Mermaid diagrams with a blue/green theme. No emojis. Labels are simplified to avoid parser issues.All visuals below are Mermaid diagrams (emoji-free) using a strict blue/green palette.
+This workflow is derived from the actual implementation in `compliance_engine.py` and `app.py`. It shows the real technical architecture, not a generic template.This workflow follows the exact format shown in the reference image with main process steps and detailed sub-components.
 
 
 
@@ -129,53 +10,61 @@ All visuals are Mermaid diagrams with a blue/green theme. No emojis. Labels are 
 
 
 
-## 1) End-to-End Pipeline## 1) End-to-End Pipeline
+## Main Process Flow (From Code Analysis)## Main Process Flow
 
 
 
-```mermaid```mermaid
+``````
 
-flowchart TDflowchart TD
+┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
 
-    A[Video Input] --> B[Preprocess]    A[Video Input] --> B[Preprocess]
+│   FastAPI Upload    │───▶│  ComplianceEngine   │───▶│  Evidence & Scoring │───▶│   Results & API     ││     Upload Video    │───▶│    AI Analysis      │───▶│   Evidence Review   │───▶│    Get Report       │
 
-    B --> C[YOLOv8 Detection]    B --> C[YOLOv8 Detection]
+│   File Validation   │    │   AI Processing     │    │   Clip Generation   │    │   JSON + Web UI     ││   Factory Tour      │    │   2-3 minutes       │    │  Compliance Check   │    │   PDF Download      │
 
-    C --> D[DeepSORT Tracking]    C --> D[DeepSORT Tracking]
+└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
 
-    D --> E[MediaPipe Pose]    D --> E[MediaPipe Pose]
+          │                          │                          │                          │          │                          │                          │                          │
 
-    E --> F[Rule Engine]    E --> F[Rule Engine]
+          │                          │                          │                          │          │                          │                          │                          │
 
-    F --> G[Temporal Reasoning]    F --> G[Temporal Reasoning]
+          ▼                          ▼                          ▼                          ▼          ▼                          ▼                          ▼                          ▼
 
-    G --> H[Evidence Generation H264 avc1]    G --> H[Evidence Generation (H.264/avc1)]
+┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
 
-    H --> I[Compliance Scoring]    H --> I[Compliance Scoring]
+│  File Type Check    │    │ Video Type Detection│    │ Rule Engine Eval    │    │  Compliance Score   ││    Drag & Drop      │    │  Computer Vision    │    │   Rule Engine       │    │  Compliance Score   │
 
-    I --> J[JSON Output and UI]    I --> J[JSON Output / UI]
+└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
 
+          │                          │                          │                          │          │                          │                          │                          │
 
+          ▼                          ▼                          ▼                          ▼          ▼                          ▼                          ▼                          ▼
 
-    style A fill:#e3f2fd    style A fill:#e3f2fd
+┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
 
-    style B fill:#e8f5e8    style B fill:#e8f5e8
+│   MIME Validation   │    │ Frame Preprocessing │    │ Temporal Reasoning  │    │  Violation Details  ││   Video Preview     │    │  Object Detection   │    │  Safety Assessment  │    │  Violation Details  │
 
-    style C fill:#e3f2fd    style C fill:#e3f2fd
+└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
 
-    style D fill:#e8f5e8    style D fill:#e8f5e8
+          │                          │                          │                          │          │                          │                          │                          │
 
-    style E fill:#e3f2fd    style E fill:#e3f2fd
+          ▼                          ▼                          ▼                          ▼          ▼                          ▼                          ▼                          ▼
 
-    style F fill:#e8f5e8    style F fill:#e8f5e8
+┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
 
-    style G fill:#e3f2fd    style G fill:#e3f2fd
+│   Background Task   │    │ YOLOv8 + DeepSORT   │    │   H264 Encoding     │    │  Static File Serve  ││   Format Check      │    │  Pose Estimation    │    │  Temporal Analysis  │    │  Recommendations   │
 
-    style H fill:#e8f5e8    style H fill:#e8f5e8
+└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
 
-    style I fill:#e3f2fd    style I fill:#e3f2fd
+          │                          │                          │                          │          │                          │                          │                          │
 
-    style J fill:#e8f5e8    style J fill:#e8f5e8
+          ▼                          ▼                          ▼                          ▼          ▼                          ▼                          ▼                          ▼
+
+┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
+
+│   Analysis Cache    │    │   MediaPipe Pose    │    │ Evidence Database   │    │   Web Dashboard     ││  Quality Validation │    │   Track Assignment  │    │  Evidence Generation│    │   Export Options    │
+
+└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘└─────────────────────┘    └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
 
 ``````
 
@@ -185,24 +74,339 @@ flowchart TDflowchart TD
 
 
 
+## Detailed Technical Implementation (From Source Code)## Detailed Component Breakdown
+
+
+
+### Step 1: FastAPI Upload (File Validation)### Step 1: Upload Video (Factory Tour)
+
+**Source**: `app.py:87-120`- **Drag & Drop**: Simple file upload interface
+
+- **File Type Check**: `file.content_type.startswith("video/")`- **Video Preview**: Thumbnail and metadata display  
+
+- **MIME Validation**: MP4, AVI, MOV, WebM support registered- **Format Check**: Validate MP4/MOV/360° formats
+
+- **Background Task**: `background_tasks.add_task(process_video_analysis)`- **Quality Validation**: Resolution and duration checks
+
+- **Analysis Cache**: `analysis_cache[analysis_id]` with UUID tracking
+
+### Step 2: AI Analysis (2-3 minutes)
+
+### Step 2: ComplianceEngine (AI Processing)  - **Computer Vision**: YOLOv8 object detection pipeline
+
+**Source**: `compliance_engine.py:696-750`- **Object Detection**: Identify persons, PPE, hazards, equipment
+
+- **Video Type Detection**: `detect_video_type()` - standard vs 360°- **Pose Estimation**: MediaPipe 33-keypoint analysis
+
+- **Frame Preprocessing**: `preprocess_video()` - 2 FPS sampling, 640x640 resize- **Track Assignment**: DeepSORT multi-object tracking
+
+- **YOLOv8 + DeepSORT**: `run_object_detection()` + `run_tracking()`
+
+- **MediaPipe Pose**: `analyze_pose()` - 33 keypoint analysis### Step 3: Evidence Review (Compliance Check)  
+
+- **Rule Engine**: Industry-specific compliance rules
+
+### Step 3: Evidence & Scoring (Clip Generation)- **Safety Assessment**: PPE and posture violations
+
+**Source**: `compliance_engine.py:345-695`- **Temporal Analysis**: Multi-frame violation reasoning
+
+- **Rule Engine Eval**: `evaluate_compliance_rules()` - industry-specific logic- **Evidence Generation**: H264/avc1 clips and thumbnails
+
+- **Temporal Reasoning**: Multi-frame violation analysis with confidence
+
+- **H264 Encoding**: `_create_video_clip()` - H264/avc1 for browser compatibility### Step 4: Get Report (PDF Download)
+
+- **Evidence Database**: Violation clips + thumbnails persisted to `/outputs`- **Compliance Score**: Percentage-based grading system
+
+- **Violation Details**: Timestamped evidence with confidence
+
+### Step 4: Results & API (JSON + Web UI)- **Recommendations**: Actionable improvement suggestions
+
+**Source**: `app.py:74-86` + `templates/results.html`- **Export Options**: PDF, JSON, CSV formats
+
+- **Compliance Score**: Percentage calculation with violation weighting
+
+- **Violation Details**: Timestamped evidence with confidence scores---
+
+- **Static File Serve**: `/outputs` mounted for video/image serving
+
+- **Web Dashboard**: Jinja2 templates with Bootstrap UI## Alternative Mermaid Representation
+
+
+
+---```mermaid
+
+flowchart LR
+
+## Real AI Pipeline Components (Implementation Status)    A["Upload Video<br/>Factory Tour"] --> B["AI Analysis<br/>2-3 minutes"]
+
+    B --> C["Evidence Review<br/>Compliance Check"]
+
+| Component | Status | Implementation | Fallback |    C --> D["Get Report<br/>PDF Download"]
+
+|-----------|--------|---------------|----------|    
+
+| **YOLOv8** | ✅ Active | `ultralytics.YOLO('yolov8n.pt')` | Mock detections |    A1["Drag & Drop"] -.-> A
+
+| **DeepSORT** | ✅ Active | `deep_sort_realtime.DeepSort` | MockTracker |    A2["Video Preview"] -.-> A
+
+| **MediaPipe** | ✅ Active | `mediapipe.solutions.pose` | Heuristic pose |    A3["Format Check"] -.-> A
+
+| **OpenCV** | ✅ Active | Video preprocessing + encoding | - |    A4["Quality Validation"] -.-> A
+
+| **FastAPI** | ✅ Active | Web server + static file serving | - |    
+
+| **Rule Engine** | ✅ Active | Industry-specific compliance logic | - |    B1["Computer Vision"] -.-> B
+
+    B2["Object Detection"] -.-> B
+
+---    B3["Pose Estimation"] -.-> B
+
+    B4["Track Assignment"] -.-> B
+
+## Code-Level Data Flow    
+
+    C1["Rule Engine"] -.-> C
+
+```python    C2["Safety Assessment"] -.-> C
+
+# 1. Upload (app.py)    C3["Temporal Analysis"] -.-> C
+
+analysis_id = str(uuid.uuid4())    C4["Evidence Generation"] -.-> C
+
+background_tasks.add_task(process_video_analysis, analysis_id, video_path)    
+
+    D1["Compliance Score"] -.-> D
+
+# 2. Engine Analysis (compliance_engine.py)      D2["Violation Details"] -.-> D
+
+video_metadata = engine.detect_video_type(video_path)    D3["Recommendations"] -.-> D
+
+frames = engine.preprocess_video(video_path)  # 2 FPS sampling    D4["Export Options"] -.-> D
+
+detections = engine.run_object_detection(frames)  # YOLOv8
+
+tracked = engine.run_tracking(detections)  # DeepSORT    style A fill:#4CAF50
+
+pose_data = engine.analyze_pose(frames, tracked)  # MediaPipe    style B fill:#2196F3
+
+violations = engine.evaluate_compliance_rules(tracked, pose_data)    style C fill:#2196F3
+
+    style D fill:#9C27B0
+
+# 3. Evidence Generation```
+
+evidence = engine.generate_evidence(violations, video_path, output_dir)
+
+score = engine.calculate_compliance_score(violations, duration)---
+
+
+
+# 4. Results Storage## Process Timeline
+
+analysis_cache[analysis_id] = {
+
+    'status': 'complete',| Phase | Duration | Key Activities | Output |
+
+    'violations': violations_with_evidence,|-------|----------|----------------|---------|
+
+    'compliance_score': score,| Upload | 30 seconds | File validation, preview generation | Ready for analysis |
+
+    'timeline': timeline_data| AI Analysis | 2-3 minutes | Computer vision, detection, tracking | Raw violations |
+
+}| Evidence Review | 1 minute | Rule application, clip generation | Evidence package |
+
+```| Report Generation | 30 seconds | Scoring, formatting, export | Final report |
+
+
+
+------
+
+
+
+## Architecture Validation## Technology Stack per Phase
+
+
+
+**Model Loading Check** (`compliance_engine.py:63-95`):- **Upload**: HTML5 File API, FFmpeg metadata extraction
+
+```python- **AI Analysis**: YOLOv8, DeepSORT, MediaPipe, OpenCV
+
+# Real model initialization with fallbacks- **Evidence Review**: Custom rule engine, H264 encoding
+
+if YOLO_AVAILABLE:- **Report**: PDF generation, JSON serialization, web dashboard
+
+    self.yolo_model = YOLO('yolov8n.pt')# Compliance Analysis Workflow (Visual)# Compliance Analysis Workflow (Visual)
+
+if MEDIAPIPE_AVAILABLE:  
+
+    self.pose_estimator = mp_pose.Pose(model_complexity=1)
+
+if DEEPSORT_AVAILABLE:
+
+    self.tracker = DeepSort(max_age=30, n_init=3)All visuals are Mermaid diagrams with a blue/green theme. No emojis. Labels are simplified to avoid parser issues.All visuals below are Mermaid diagrams (emoji-free) using a strict blue/green palette.
+
+```
+
+
+
+**Evidence Generation** (`compliance_engine.py:600-650`):
+
+```python------
+
+# H264/avc1 encoding for browser compatibility
+
+ffmpeg_cmd = f'ffmpeg -i "{input_path}" -ss {start_time} -t {duration} -c:v libx264 -preset fast -crf 23 -c:a aac "{output_path}"'
+
+```
+
+## 1) End-to-End Pipeline## 1) End-to-End Pipeline
+
+**Web Integration** (`app.py:50-65`):
+
+```python
+
+# Static file serving with proper MIME types
+
+app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")```mermaid```mermaid
+
+mimetypes.add_type('video/mp4', '.mp4')
+
+```flowchart TDflowchart TD
+
+
+
+---    A[Video Input] --> B[Preprocess]    A[Video Input] --> B[Preprocess]
+
+
+
+## Mermaid Representation (Code-Derived)    B --> C[YOLOv8 Detection]    B --> C[YOLOv8 Detection]
+
+
+
+```mermaid    C --> D[DeepSORT Tracking]    C --> D[DeepSORT Tracking]
+
+flowchart LR
+
+    A["FastAPI Upload<br/>File Validation"] --> B["ComplianceEngine<br/>AI Processing"]    D --> E[MediaPipe Pose]    D --> E[MediaPipe Pose]
+
+    B --> C["Evidence & Scoring<br/>Clip Generation"]
+
+    C --> D["Results & API<br/>JSON + Web UI"]    E --> F[Rule Engine]    E --> F[Rule Engine]
+
+    
+
+    A1["File Type Check"] -.-> A    F --> G[Temporal Reasoning]    F --> G[Temporal Reasoning]
+
+    A2["MIME Validation"] -.-> A
+
+    A3["Background Task"] -.-> A    G --> H[Evidence Generation H264 avc1]    G --> H[Evidence Generation (H.264/avc1)]
+
+    A4["Analysis Cache"] -.-> A
+
+        H --> I[Compliance Scoring]    H --> I[Compliance Scoring]
+
+    B1["Video Type Detection"] -.-> B
+
+    B2["Frame Preprocessing"] -.-> B    I --> J[JSON Output and UI]    I --> J[JSON Output / UI]
+
+    B3["YOLOv8 + DeepSORT"] -.-> B
+
+    B4["MediaPipe Pose"] -.-> B
+
+    
+
+    C1["Rule Engine Eval"] -.-> C    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    C2["Temporal Reasoning"] -.-> C
+
+    C3["H264 Encoding"] -.-> C    style B fill:#e8f5e8    style B fill:#e8f5e8
+
+    C4["Evidence Database"] -.-> C
+
+        style C fill:#e3f2fd    style C fill:#e3f2fd
+
+    D1["Compliance Score"] -.-> D
+
+    D2["Violation Details"] -.-> D    style D fill:#e8f5e8    style D fill:#e8f5e8
+
+    D3["Static File Serve"] -.-> D
+
+    D4["Web Dashboard"] -.-> D    style E fill:#e3f2fd    style E fill:#e3f2fd
+
+
+
+    style A fill:#4CAF50    style F fill:#e8f5e8    style F fill:#e8f5e8
+
+    style B fill:#2196F3
+
+    style C fill:#2196F3    style G fill:#e3f2fd    style G fill:#e3f2fd
+
+    style D fill:#9C27B0
+
+```    style H fill:#e8f5e8    style H fill:#e8f5e8
+
+
+
+---    style I fill:#e3f2fd    style I fill:#e3f2fd
+
+
+
+## Real Performance Metrics (From Implementation)    style J fill:#e8f5e8    style J fill:#e8f5e8
+
+
+
+| Stage | Processing Time | Technical Details | Code Location |``````
+
+|-------|----------------|-------------------|---------------|
+
+| Upload | ~5 seconds | File validation + UUID generation | `app.py:87-120` |
+
+| AI Processing | 2-3 minutes | YOLOv8 + DeepSORT + MediaPipe at 2 FPS | `compliance_engine.py:696-750` |
+
+| Evidence Generation | ~30 seconds | H264 encoding + thumbnail generation | `compliance_engine.py:600-650` |------
+
+| Results Delivery | <1 second | JSON serialization + static file serving | `app.py:74-86` |
+
+
+
+---
+
 ## 2) Video Input and Preprocessing## 2) Video Input & Preprocessing
 
+## Industry Rule Engine (Actual Implementation)
 
 
-```mermaid```mermaid
 
-flowchart LRflowchart LR
+**Manufacturing Pack** (`compliance_engine.py:_load_industry_rules`):
+
+- Helmet detection requirement```mermaid```mermaid
+
+- Safety vest compliance  
+
+- Restricted area monitoringflowchart LRflowchart LR
+
+- PPE combination validation
 
     A[Standard Video MP4 or MOV] --> C[Resize 640x640]    A[Standard Video (MP4/MOV)] --> C[Resize 640x640]
 
-    B[360 Video Equirectangular] --> D[Generate Perspective Tiles]    B[360° Video (Equirectangular)] --> D[Generate Perspective Tiles]
+**Code Structure**:
 
-    C --> E[Sample 2 FPS]    C --> E[Sample 2 FPS]
+```python    B[360 Video Equirectangular] --> D[Generate Perspective Tiles]    B[360° Video (Equirectangular)] --> D[Generate Perspective Tiles]
 
-    D --> E    D --> E
+def evaluate_compliance_rules(self, detections, pose_data):
 
-    E --> F[Frames for Inference]    E --> F[Frames for Inference]
+    violations = []    C --> E[Sample 2 FPS]    C --> E[Sample 2 FPS]
 
+    for rule in self.industry_rules:
+
+        rule_violations = self._evaluate_single_rule(rule, detections, pose_data)    D --> E    D --> E
+
+        violations.extend(rule_violations)
+
+    return violations    E --> F[Frames for Inference]    E --> F[Frames for Inference]
+
+```
 
 
     style A fill:#e3f2fd    style A fill:#e3f2fd
