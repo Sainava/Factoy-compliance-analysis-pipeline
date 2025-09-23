@@ -1,128 +1,253 @@
-# Compliance Analysis Workflow (Visual)
+# Compliance Analysis Workflow (Visual)# Compliance Analysis Workflow (Visual)
 
-All visuals below are Mermaid diagrams (emoji-free) using a strict blue/green palette.
 
----
 
-## 1) End-to-End Pipeline
+All visuals are Mermaid diagrams with a blue/green theme. No emojis. Labels are simplified to avoid parser issues.All visuals below are Mermaid diagrams (emoji-free) using a strict blue/green palette.
 
-```mermaid
-flowchart TD
-    A[Video Input] --> B[Preprocess]
-    B --> C[YOLOv8 Detection]
-    C --> D[DeepSORT Tracking]
-    D --> E[MediaPipe Pose]
-    E --> F[Rule Engine]
-    F --> G[Temporal Reasoning]
-    G --> H[Evidence Generation (H.264/avc1)]
-    H --> I[Compliance Scoring]
-    I --> J[JSON Output / UI]
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style E fill:#e3f2fd
-    style F fill:#e8f5e8
-    style G fill:#e3f2fd
-    style H fill:#e8f5e8
-    style I fill:#e3f2fd
-    style J fill:#e8f5e8
-```
 
----
+------
 
-## 2) Video Input & Preprocessing
 
-```mermaid
-flowchart LR
-    A[Standard Video (MP4/MOV)] --> C[Resize 640x640]
-    B[360° Video (Equirectangular)] --> D[Generate Perspective Tiles]
-    C --> E[Sample 2 FPS]
-    D --> E
-    E --> F[Frames for Inference]
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style E fill:#e3f2fd
-    style F fill:#e8f5e8
-```
+## 1) End-to-End Pipeline## 1) End-to-End Pipeline
 
----
 
-## 3) Per-Frame Intelligence
 
-```mermaid
-flowchart TD
-    A[640x640 Frame] --> B[YOLOv8: Persons / PPE / Hazards]
-    B --> C[Detections]
-    C --> D[DeepSORT: Track IDs]
-    D --> E[MediaPipe Pose]
-    E --> F[Postures / Motions]
+```mermaid```mermaid
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style E fill:#e3f2fd
-    style F fill:#e8f5e8
-```
+flowchart TDflowchart TD
 
----
+    A[Video Input] --> B[Preprocess]    A[Video Input] --> B[Preprocess]
 
-## 4) Rules, Evidence, and Scoring
+    B --> C[YOLOv8 Detection]    B --> C[YOLOv8 Detection]
 
-```mermaid
-flowchart TD
-    A[Person Timelines] --> B[Rule Engine]
-    B --> C[Violation Events]
-    C --> D[Evidence Clips + Thumbnails]
-    D --> E[Encode H.264/avc1]
-    E --> F[Persist to /outputs]
+    C --> D[DeepSORT Tracking]    C --> D[DeepSORT Tracking]
 
-    B --> G[Compliance Metrics]
-    G --> H[Score = 100 - (violations / total) * 100]
+    D --> E[MediaPipe Pose]    D --> E[MediaPipe Pose]
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style E fill:#e3f2fd
-    style F fill:#e8f5e8
-    style G fill:#e3f2fd
-    style H fill:#e8f5e8
-```
+    E --> F[Rule Engine]    E --> F[Rule Engine]
 
----
+    F --> G[Temporal Reasoning]    F --> G[Temporal Reasoning]
 
-## 5) System Architecture
+    G --> H[Evidence Generation H264 avc1]    G --> H[Evidence Generation (H.264/avc1)]
 
-```mermaid
-flowchart LR
-    A[Upload API (FastAPI)] --> B[Pipeline Worker]
-    B --> C[Preprocess + Inference]
-    C --> D[Evidence & Scoring]
-    D --> E[Results Store]
-    E --> F[Web UI / Dashboard]
-    F --> G[Serve Evidence (Static Files)]
+    H --> I[Compliance Scoring]    H --> I[Compliance Scoring]
 
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style E fill:#e3f2fd
-    style F fill:#e8f5e8
-    style G fill:#e3f2fd
-```
+    I --> J[JSON Output and UI]    I --> J[JSON Output / UI]
 
----
 
-Notes
-- Emoji-free; colors limited to blue (#e3f2fd) and green (#e8f5e8).
-- Evidence videos encoded H.264/avc1 for browser playback.
-- Should render in VS Code Markdown Preview and GitHub.
+
+    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8    style F fill:#e8f5e8
+
+    style G fill:#e3f2fd    style G fill:#e3f2fd
+
+    style H fill:#e8f5e8    style H fill:#e8f5e8
+
+    style I fill:#e3f2fd    style I fill:#e3f2fd
+
+    style J fill:#e8f5e8    style J fill:#e8f5e8
+
+``````
+
+
+
+------
+
+
+
+## 2) Video Input and Preprocessing## 2) Video Input & Preprocessing
+
+
+
+```mermaid```mermaid
+
+flowchart LRflowchart LR
+
+    A[Standard Video MP4 or MOV] --> C[Resize 640x640]    A[Standard Video (MP4/MOV)] --> C[Resize 640x640]
+
+    B[360 Video Equirectangular] --> D[Generate Perspective Tiles]    B[360° Video (Equirectangular)] --> D[Generate Perspective Tiles]
+
+    C --> E[Sample 2 FPS]    C --> E[Sample 2 FPS]
+
+    D --> E    D --> E
+
+    E --> F[Frames for Inference]    E --> F[Frames for Inference]
+
+
+
+    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8    style F fill:#e8f5e8
+
+``````
+
+
+
+------
+
+
+
+## 3) Per Frame Intelligence## 3) Per-Frame Intelligence
+
+
+
+```mermaid```mermaid
+
+flowchart TDflowchart TD
+
+    A[Frame 640x640] --> B[YOLOv8 Detect Persons PPE Hazards]    A[640x640 Frame] --> B[YOLOv8: Persons / PPE / Hazards]
+
+    B --> C[Detections]    B --> C[Detections]
+
+    C --> D[DeepSORT Assign Track IDs]    C --> D[DeepSORT: Track IDs]
+
+    D --> E[MediaPipe Pose]    D --> E[MediaPipe Pose]
+
+    E --> F[Postures and Motions]    E --> F[Postures / Motions]
+
+
+
+    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8    style F fill:#e8f5e8
+
+``````
+
+
+
+------
+
+
+
+## 4) Rules Evidence and Scoring## 4) Rules, Evidence, and Scoring
+
+
+
+```mermaid```mermaid
+
+flowchart TDflowchart TD
+
+    A[Person Timelines] --> B[Rule Engine]    A[Person Timelines] --> B[Rule Engine]
+
+    B --> C[Violation Events]    B --> C[Violation Events]
+
+    C --> D[Evidence Clips and Thumbnails]    C --> D[Evidence Clips + Thumbnails]
+
+    D --> E[Encode H264 avc1]    D --> E[Encode H.264/avc1]
+
+    E --> F[Persist to outputs]    E --> F[Persist to /outputs]
+
+
+
+    B --> G[Compliance Metrics]    B --> G[Compliance Metrics]
+
+    G --> H[Score 100 minus violations over total times 100]    G --> H[Score = 100 - (violations / total) * 100]
+
+
+
+    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8    style F fill:#e8f5e8
+
+    style G fill:#e3f2fd    style G fill:#e3f2fd
+
+    style H fill:#e8f5e8    style H fill:#e8f5e8
+
+``````
+
+
+
+------
+
+
+
+## 5) System Architecture## 5) System Architecture
+
+
+
+```mermaid```mermaid
+
+flowchart LRflowchart LR
+
+    A[Upload API FastAPI] --> B[Pipeline Worker]    A[Upload API (FastAPI)] --> B[Pipeline Worker]
+
+    B --> C[Preprocess and Inference]    B --> C[Preprocess + Inference]
+
+    C --> D[Evidence and Scoring]    C --> D[Evidence & Scoring]
+
+    D --> E[Results Store]    D --> E[Results Store]
+
+    E --> F[Web UI Dashboard]    E --> F[Web UI / Dashboard]
+
+    F --> G[Serve Evidence Static Files]    F --> G[Serve Evidence (Static Files)]
+
+
+
+    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8    style F fill:#e8f5e8
+
+    style G fill:#e3f2fd    style G fill:#e3f2fd
+
+``````
+
+
+
+------
+
+
+
+NotesNotes
+
+- Strict blue #e3f2fd and green #e8f5e8 only.- Emoji-free; colors limited to blue (#e3f2fd) and green (#e8f5e8).
+
+- Evidence videos encoded H264 avc1 for browser playback.- Evidence videos encoded H.264/avc1 for browser playback.
+
+- Should render in VS Code Markdown Preview and GitHub.- Should render in VS Code Markdown Preview and GitHub.
+
 # Compliance Analysis Workflow (Visual)
 
 This document provides visual diagrams of the end-to-end pipeline. All diagrams use a blue/green theme and no emojis.
