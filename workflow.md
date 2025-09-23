@@ -1,5 +1,130 @@
 # Compliance Analysis Workflow (Visual)
 
+All visuals below are Mermaid diagrams (emoji-free) using a strict blue/green palette.
+
+---
+
+## 1) End-to-End Pipeline
+
+```mermaid
+flowchart TD
+    A[Video Input] --> B[Preprocess]
+    B --> C[YOLOv8 Detection]
+    C --> D[DeepSORT Tracking]
+    D --> E[MediaPipe Pose]
+    E --> F[Rule Engine]
+    F --> G[Temporal Reasoning]
+    G --> H[Evidence Generation (H.264/avc1)]
+    H --> I[Compliance Scoring]
+    I --> J[JSON Output / UI]
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#e8f5e8
+    style E fill:#e3f2fd
+    style F fill:#e8f5e8
+    style G fill:#e3f2fd
+    style H fill:#e8f5e8
+    style I fill:#e3f2fd
+    style J fill:#e8f5e8
+```
+
+---
+
+## 2) Video Input & Preprocessing
+
+```mermaid
+flowchart LR
+    A[Standard Video (MP4/MOV)] --> C[Resize 640x640]
+    B[360° Video (Equirectangular)] --> D[Generate Perspective Tiles]
+    C --> E[Sample 2 FPS]
+    D --> E
+    E --> F[Frames for Inference]
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#e8f5e8
+    style E fill:#e3f2fd
+    style F fill:#e8f5e8
+```
+
+---
+
+## 3) Per-Frame Intelligence
+
+```mermaid
+flowchart TD
+    A[640x640 Frame] --> B[YOLOv8: Persons / PPE / Hazards]
+    B --> C[Detections]
+    C --> D[DeepSORT: Track IDs]
+    D --> E[MediaPipe Pose]
+    E --> F[Postures / Motions]
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#e8f5e8
+    style E fill:#e3f2fd
+    style F fill:#e8f5e8
+```
+
+---
+
+## 4) Rules, Evidence, and Scoring
+
+```mermaid
+flowchart TD
+    A[Person Timelines] --> B[Rule Engine]
+    B --> C[Violation Events]
+    C --> D[Evidence Clips + Thumbnails]
+    D --> E[Encode H.264/avc1]
+    E --> F[Persist to /outputs]
+
+    B --> G[Compliance Metrics]
+    G --> H[Score = 100 - (violations / total) * 100]
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#e8f5e8
+    style E fill:#e3f2fd
+    style F fill:#e8f5e8
+    style G fill:#e3f2fd
+    style H fill:#e8f5e8
+```
+
+---
+
+## 5) System Architecture
+
+```mermaid
+flowchart LR
+    A[Upload API (FastAPI)] --> B[Pipeline Worker]
+    B --> C[Preprocess + Inference]
+    C --> D[Evidence & Scoring]
+    D --> E[Results Store]
+    E --> F[Web UI / Dashboard]
+    F --> G[Serve Evidence (Static Files)]
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#e3f2fd
+    style D fill:#e8f5e8
+    style E fill:#e3f2fd
+    style F fill:#e8f5e8
+    style G fill:#e3f2fd
+```
+
+---
+
+Notes
+- Emoji-free; colors limited to blue (#e3f2fd) and green (#e8f5e8).
+- Evidence videos encoded H.264/avc1 for browser playback.
+- Should render in VS Code Markdown Preview and GitHub.
+# Compliance Analysis Workflow (Visual)
+
 This document provides visual diagrams of the end-to-end pipeline. All diagrams use a blue/green theme and no emojis.
 
 ---
