@@ -1,4 +1,4 @@
-# Compliance Detection Model Architecture# Compliance Detection Model Architecture# Compliance Detection Model Architecture
+# Compliance Detection Model Architecture# Compliance Detection Model Architecture# Compliance Detection Model Architecture# Compliance Detection Model Architecture
 
 
 
@@ -6,7 +6,7 @@ This is the ML model pipeline for analyzing factory videos and detecting complia
 
 
 
----This is the ML model pipeline for analyzing factory videos and detecting compliance violations. It's designed to be modular, scalable, and ready for integration.This is the ML model pipeline for analyzing factory videos and detecting compliance violations. It's designed to be modular, scalable, and ready for integration.
+---This is the ML model pipeline for analyzing factory videos and detecting compliance violations. It's designed to be modular, scalable, and ready for integration.
 
 
 
@@ -14,7 +14,7 @@ This is the ML model pipeline for analyzing factory videos and detecting complia
 
 
 
-```mermaid------
+```mermaid---This is the ML model pipeline for analyzing factory videos and detecting compliance violations. It's designed to be modular, scalable, and ready for integration.This is the ML model pipeline for analyzing factory videos and detecting compliance violations. It's designed to be modular, scalable, and ready for integration.
 
 flowchart TD
 
@@ -22,7 +22,7 @@ flowchart TD
 
     B -->|Standard| C[Resize to 640x640]
 
-    B -->|360°| D[Convert to Perspective Tiles]## Complete Pipeline Flow## Complete Pipeline Flow
+    B -->|360°| D[Convert to Perspective Tiles]## Complete Pipeline Flow
 
     C --> E[Frame Sampling 2 FPS]
 
@@ -30,411 +30,847 @@ flowchart TD
 
     E --> F[YOLOv8 Object Detection]
 
-    F --> G[DeepSORT Tracking]```mermaid```mermaid
+    F --> G[DeepSORT Tracking]```mermaid------
 
     G --> H[MediaPipe Pose Analysis]
 
-    H --> I[Rule Engine Evaluation]flowchart TDflowchart TD
+    H --> I[Rule Engine Evaluation]flowchart TD
 
     I --> J[Temporal Reasoning]
 
-    J --> K[Evidence Generation]    A[Video Input MP4/360°] --> B{Video Type?}    A[Video Input MP4/360°] --> B{Video Type?}
+    J --> K[Evidence Generation]    A[Video Input MP4/360°] --> B{Video Type?}
 
     K --> L[Compliance Scoring]
 
-    L --> M[JSON Output Dashboard Ready]    B -->|Standard| C[Resize to 640x640]    B -->|Standard| C[Resize to 640x640]
+    L --> M[JSON Output Dashboard Ready]    B -->|Standard| C[Resize to 640x640]
 
     
 
-    style A fill:#e3f2fd    B -->|360°| D[Convert to Perspective Tiles]    B -->|360°| D[Convert to Perspective Tiles]
+    style A fill:#e3f2fd    B -->|360°| D[Convert to Perspective Tiles]## Complete Pipeline Flow## Complete Pipeline Flow
 
     style C fill:#e8f5e8
 
-    style D fill:#e3f2fd    C --> E[Frame Sampling 2 FPS]    C --> E[Frame Sampling 2 FPS]
+    style D fill:#e3f2fd    C --> E[Frame Sampling 2 FPS]
 
     style E fill:#e8f5e8
 
-    style F fill:#e3f2fd    D --> E    D --> E
+    style F fill:#e3f2fd    D --> E
 
     style G fill:#e8f5e8
 
-    style H fill:#e3f2fd    E --> F[YOLOv8 Object Detection]    E --> F[YOLOv8 Object Detection]
+    style H fill:#e3f2fd    E --> F[YOLOv8 Object Detection]
 
     style I fill:#e8f5e8
 
-    style J fill:#e3f2fd    F --> G[DeepSORT Tracking]    F --> G[DeepSORT Tracking]
+    style J fill:#e3f2fd    F --> G[DeepSORT Tracking]```mermaid```mermaid
 
     style K fill:#e8f5e8
 
-    style L fill:#e3f2fd    G --> H[MediaPipe Pose Analysis]    G --> H[MediaPipe Pose Analysis]
+    style L fill:#e3f2fd    G --> H[MediaPipe Pose Analysis]
 
     style M fill:#e8f5e8
 
-```    H --> I[Rule Engine Evaluation]    H --> I[Rule Engine Evaluation]
+```    H --> I[Rule Engine Evaluation]flowchart TDflowchart TD
 
 
 
----    I --> J[Temporal Reasoning]    I --> J[Temporal Reasoning]
+---    I --> J[Temporal Reasoning]
 
 
 
-## 1. Video Input & Preprocessing    J --> K[Evidence Generation]    J --> K[Evidence Generation]
+## Video Input & Preprocessing    J --> K[Evidence Generation]    A[Video Input MP4/360°] --> B{Video Type?}    A[Video Input MP4/360°] --> B{Video Type?}
 
 
 
-**Purpose**: Normalize video input for consistent ML processing across different camera types.    K --> L[Compliance Scoring]    K --> L[Compliance Scoring]
+```mermaid    K --> L[Compliance Scoring]
 
+flowchart LR
 
+    A[Standard Video MP4/MOV] --> C[Resize 640x640]    L --> M[JSON Output Dashboard Ready]    B -->|Standard| C[Resize to 640x640]    B -->|Standard| C[Resize to 640x640]
 
-**Input Types**:    L --> M[JSON Output Dashboard Ready]    L --> M[JSON Output Dashboard Ready]
+    B[360° Video Equirectangular] --> D[Generate Tiles 4 perspectives]
 
-- Standard MP4/MOV walkthrough videos (phone/CCTV)
+        
 
-- 360° factory surveillance videos (equirectangular format)        
+    C --> E[Frame Sampling Every 0.5s]
 
-
-
-```python    style A fill:#e3f2fd    style A fill:#e3f2fd
-
-# Load and sample video frames at 2 FPS
-
-cap = cv2.VideoCapture(video_path)    style C fill:#e8f5e8    style C fill:#e8f5e8
-
-sample_interval = int(fps / 2)  # Sample every 0.5 seconds
-
-    style D fill:#e3f2fd    style D fill:#e3f2fd
-
-for frame_idx in range(0, total_frames, sample_interval):
-
-    ret, frame = cap.read()    style E fill:#e8f5e8    style E fill:#e8f5e8
-
-    if ret:
-
-        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size    style F fill:#e3f2fd    style F fill:#e3f2fd
-
-        frame = frame / 255.0  # Normalize to [0,1]
-
-        frames.append((frame_idx, timestamp, frame))    style G fill:#e8f5e8    style G fill:#e8f5e8
-
-```
-
-    style H fill:#e3f2fd    style H fill:#e3f2fd
-
----
-
-    style I fill:#e8f5e8    style I fill:#e8f5e8
-
-## 2. Object Detection Layer (YOLOv8)
-
-    style J fill:#e3f2fd    style J fill:#e3f2fd
-
-**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.
-
-    style K fill:#e8f5e8    style K fill:#e8f5e8
-
-**Custom Detection Classes**:
-
-```yaml    style L fill:#e3f2fd    style L fill:#e3f2fd
-
-names:
-
-  0: person    style M fill:#e8f5e8    style M fill:#e8f5e8
-
-  1: helmet
-
-  2: vest  ``````
-
-  3: gloves
-
-  4: mask
-
-  5: exit_sign
-
-  6: fire_extinguisher------
-
-  7: spill
-
-  8: obstruction
-
-  9: machinery
-
-```## 1. Video Input & Preprocessing## 1. Video Input & Preprocessing
-
-
-
-```python
-
-# Run detection with confidence threshold
-
-results = model.predict(frame, conf=0.45, iou=0.5)**Purpose**: Normalize video input for consistent ML processing across different camera types.**Purpose**: Normalize video input for consistent ML processing across different camera types.
-
-
-
-# Extract detections
-
-for box in results[0].boxes:
-
-    detection = {**Input Types**:**Input Types**:
-
-        'bbox': [x1, y1, x2, y2],
-
-        'class_name': model.names[int(box.cls[0])],- Standard MP4/MOV walkthrough videos (phone/CCTV)- Standard MP4/MOV walkthrough videos (phone/CCTV)
-
-        'confidence': float(box.conf[0]),
-
-        'timestamp': frame_timestamp- 360° factory surveillance videos (equirectangular format)- 360° factory surveillance videos (equirectangular format)
-
-    }
-
-```
-
-
-
----```python```python
-
-
-
-## 3. Tracking Layer (DeepSORT)# Load and sample video frames at 2 FPS# Load and sample video frames at 2 FPS
-
-
-
-**Purpose**: Maintain consistent person IDs across frames for timeline analysis.cap = cv2.VideoCapture(video_path)cap = cv2.VideoCapture(video_path)
-
-
-
-```pythonsample_interval = int(fps / 2)  # Sample every 0.5 secondssample_interval = int(fps / 2)  # Sample every 0.5 seconds
-
-# Update tracker with new detections
-
-tracks = tracker.update(detections)
-
-
-
-# Build person timelinesfor frame_idx in range(0, total_frames, sample_interval):for frame_idx in range(0, total_frames, sample_interval):
-
-for track in tracks:
-
-    person_timeline[track.track_id].append({    ret, frame = cap.read()    ret, frame = cap.read()
-
-        'bbox': track.bbox,
-
-        'timestamp': timestamp,    if ret:    if ret:
-
-        'detections': associated_ppe  # PPE items near this person
-
-    })        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size
-
-```
-
-        frame = frame / 255.0  # Normalize to [0,1]        frame = frame / 255.0  # Normalize to [0,1]
-
----
-
-        frames.append((frame_idx, timestamp, frame))        frames.append((frame_idx, timestamp, frame))
-
-## 4. Pose Estimation (MediaPipe)
-
-``````
-
-**Purpose**: Analyze worker posture and movements for safety violations.
-
-
-
-```python
-
-# Extract pose keypoints for each detected person------
-
-pose_results = pose_model.process(person_crop)
-
-
-
-# Analyze key angles and positions
-
-shoulder_angle = calculate_angle(keypoints['left_shoulder'], ## 2. Object Detection Layer (YOLOv8)## 2. Object Detection Layer (YOLOv8)
-
-                               keypoints['left_elbow'], 
-
-                               keypoints['left_wrist'])
-
-
-
-# Detect unsafe postures**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.
-
-if shoulder_angle > 90:  # Arms raised overhead
-
-    violations.append('unsafe_lifting_posture')
-
-```
-
-**Custom Detection Classes**:**Custom Detection Classes**:
-
----
-
-```yaml```yaml
-
-## 5. Rule Engine (Industry-Specific)
-
-names:names:
-
-**Purpose**: Apply business logic to detect compliance violations.
-
-  0: person  0: person
-
-```python
-
-# Manufacturing safety rules  1: helmet  1: helmet
-
-rules = {
-
-    'helmet_required': lambda person: has_ppe(person, 'helmet'),  2: vest    2: vest  
-
-    'vest_required': lambda person: has_ppe(person, 'vest'),
-
-    'no_phones': lambda person: not has_item(person, 'phone'),  3: gloves  3: gloves
-
-    'proper_lifting': lambda person: check_lifting_posture(person)
-
-}  4: mask  4: mask
-
-
-
-# Evaluate each person against rules  5: exit_sign  5: exit_sign
-
-for person_id, timeline in person_timelines.items():
-
-    for frame_data in timeline:  6: fire_extinguisher  6: fire_extinguisher
-
-        for rule_name, rule_func in rules.items():
-
-            if not rule_func(frame_data):  7: spill  7: spill
-
-                violations.append({
-
-                    'person_id': person_id,  8: obstruction  8: obstruction
-
-                    'rule': rule_name,
-
-                    'timestamp': frame_data['timestamp'],  9: machinery  9: machinery
-
-                    'bbox': frame_data['bbox']
-
-                })``````
-
-```
-
-
-
----
-
-```python```python
-
-## 6. Evidence Generation & Scoring
-
-# Run detection with confidence threshold# Run detection with confidence threshold
-
-**Purpose**: Generate visual evidence and calculate compliance score.
-
-results = model.predict(frame, conf=0.45, iou=0.5)results = model.predict(frame, conf=0.45, iou=0.5)
-
-```python
-
-# Generate evidence clips for violations
-
-def generate_evidence(violation, video_path):
-
-    start_time = violation['timestamp'] - 2  # 2 sec before# Extract detections# Extract detections
-
-    end_time = violation['timestamp'] + 3    # 3 sec after
-
-    for box in results[0].boxes:for box in results[0].boxes:
-
-    # Extract video clip
-
-    clip = extract_video_segment(video_path, start_time, end_time)    detection = {    detection = {
+    D --> F[Per-tile Sampling Every 0.5s]    style A fill:#e3f2fd    B -->|360°| D[Convert to Perspective Tiles]    B -->|360°| D[Convert to Perspective Tiles]
 
     
 
-    # Generate thumbnail        'bbox': [x1, y1, x2, y2],        'bbox': [x1, y1, x2, y2],
+    E --> G[Ready for Detection]    style C fill:#e8f5e8
 
-    thumbnail = extract_frame(video_path, violation['timestamp'])
+    F --> G
 
-            'class_name': model.names[int(box.cls[0])],        'class_name': model.names[int(box.cls[0])],
+        style D fill:#e3f2fd    C --> E[Frame Sampling 2 FPS]    C --> E[Frame Sampling 2 FPS]
 
-    return {
+    style A fill:#e3f2fd
 
-        'clip_path': save_clip(clip),        'confidence': float(box.conf[0]),        'confidence': float(box.conf[0]),
+    style B fill:#e8f5e8    style E fill:#e8f5e8
 
-        'thumbnail_path': save_thumbnail(thumbnail),
+    style C fill:#e3f2fd
 
-        'description': violation['rule']        'timestamp': frame_timestamp        'timestamp': frame_timestamp
+    style D fill:#e8f5e8    style F fill:#e3f2fd    D --> E    D --> E
 
-    }
+    style E fill:#e3f2fd
 
-    }    }
+    style F fill:#e8f5e8    style G fill:#e8f5e8
 
-# Calculate compliance score
+    style G fill:#e3f2fd
 
-total_person_minutes = sum(timeline_duration for timeline in person_timelines.values())``````
+```    style H fill:#e3f2fd    E --> F[YOLOv8 Object Detection]    E --> F[YOLOv8 Object Detection]
 
-violation_minutes = sum(violation_duration for violation in violations)
 
-compliance_score = max(0, 100 - (violation_minutes / total_person_minutes * 100))
+
+**Purpose**: Normalize video input for consistent ML processing across different camera types.    style I fill:#e8f5e8
+
+
+
+**Input Types**:    style J fill:#e3f2fd    F --> G[DeepSORT Tracking]    F --> G[DeepSORT Tracking]
+
+- Standard MP4/MOV walkthrough videos (phone/CCTV)
+
+- 360° factory surveillance videos (equirectangular format)    style K fill:#e8f5e8
+
+
+
+```python    style L fill:#e3f2fd    G --> H[MediaPipe Pose Analysis]    G --> H[MediaPipe Pose Analysis]
+
+# Load and sample video frames at 2 FPS
+
+cap = cv2.VideoCapture(video_path)    style M fill:#e8f5e8
+
+sample_interval = int(fps / 2)  # Sample every 0.5 seconds
+
+```    H --> I[Rule Engine Evaluation]    H --> I[Rule Engine Evaluation]
+
+for frame_idx in range(0, total_frames, sample_interval):
+
+    ret, frame = cap.read()
+
+    if ret:
+
+        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size---    I --> J[Temporal Reasoning]    I --> J[Temporal Reasoning]
+
+        frame = frame / 255.0  # Normalize to [0,1]
+
+        frames.append((frame_idx, timestamp, frame))
 
 ```
 
-------
+## 1. Video Input & Preprocessing    J --> K[Evidence Generation]    J --> K[Evidence Generation]
 
 ---
 
 
 
+## Object Detection Layer (YOLOv8)
+
+**Purpose**: Normalize video input for consistent ML processing across different camera types.    K --> L[Compliance Scoring]    K --> L[Compliance Scoring]
+
+```mermaid
+
+flowchart TD
+
+    A[640x640 Frame] --> B[YOLOv8 Model]
+
+    B --> C[Person Detection]**Input Types**:    L --> M[JSON Output Dashboard Ready]    L --> M[JSON Output Dashboard Ready]
+
+    B --> D[PPE Detection]
+
+    B --> E[Hazard Detection]- Standard MP4/MOV walkthrough videos (phone/CCTV)
+
+    B --> F[Equipment Detection]
+
+    - 360° factory surveillance videos (equirectangular format)        
+
+    C --> G[Bounding Boxes]
+
+    D --> G
+
+    E --> G
+
+    F --> G```python    style A fill:#e3f2fd    style A fill:#e3f2fd
+
+    
+
+    G --> H[Confidence Filtering >0.45]# Load and sample video frames at 2 FPS
+
+    H --> I[NMS IoU <0.5]
+
+    I --> J[Final Detections]cap = cv2.VideoCapture(video_path)    style C fill:#e8f5e8    style C fill:#e8f5e8
+
+    
+
+    style A fill:#e3f2fdsample_interval = int(fps / 2)  # Sample every 0.5 seconds
+
+    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd    style D fill:#e3f2fd    style D fill:#e3f2fd
+
+    style D fill:#e8f5e8
+
+    style E fill:#e3f2fdfor frame_idx in range(0, total_frames, sample_interval):
+
+    style F fill:#e8f5e8
+
+    style G fill:#e3f2fd    ret, frame = cap.read()    style E fill:#e8f5e8    style E fill:#e8f5e8
+
+    style H fill:#e8f5e8
+
+    style I fill:#e3f2fd    if ret:
+
+    style J fill:#e8f5e8
+
+```        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size    style F fill:#e3f2fd    style F fill:#e3f2fd
+
+
+
+**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.        frame = frame / 255.0  # Normalize to [0,1]
+
+
+
+**Custom Detection Classes**:        frames.append((frame_idx, timestamp, frame))    style G fill:#e8f5e8    style G fill:#e8f5e8
+
+```yaml
+
+names:```
+
+  0: person
+
+  1: helmet    style H fill:#e3f2fd    style H fill:#e3f2fd
+
+  2: vest  
+
+  3: gloves---
+
+  4: mask
+
+  5: exit_sign    style I fill:#e8f5e8    style I fill:#e8f5e8
+
+  6: fire_extinguisher
+
+  7: spill## 2. Object Detection Layer (YOLOv8)
+
+  8: obstruction
+
+  9: machinery    style J fill:#e3f2fd    style J fill:#e3f2fd
+
+```
+
+**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.
+
+---
+
+    style K fill:#e8f5e8    style K fill:#e8f5e8
+
+## Tracking Layer (DeepSORT)
+
+**Custom Detection Classes**:
+
+```mermaid
+
+flowchart TD```yaml    style L fill:#e3f2fd    style L fill:#e3f2fd
+
+    A[Frame N Detections] --> B[DeepSORT Tracker]
+
+    B --> C[Track Association]names:
+
+    C --> D[Kalman Filter Prediction]
+
+    D --> E[Feature Matching]  0: person    style M fill:#e8f5e8    style M fill:#e8f5e8
+
+    E --> F[Track ID Assignment]
+
+      1: helmet
+
+    F --> G[Person Timeline]
+
+    G --> H[Track ID: person_1]  2: vest  ``````
+
+    G --> I[Track ID: person_2] 
+
+    G --> J[Track ID: person_N]  3: gloves
+
+    
+
+    H --> K[Frame-by-frame History]  4: mask
+
+    I --> K
+
+    J --> K  5: exit_sign
+
+    
+
+    style A fill:#e3f2fd  6: fire_extinguisher------
+
+    style B fill:#e8f5e8
+
+    style C fill:#e3f2fd  7: spill
+
+    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd  8: obstruction
+
+    style F fill:#e8f5e8
+
+    style G fill:#e3f2fd  9: machinery
+
+    style H fill:#e8f5e8
+
+    style I fill:#e3f2fd```## 1. Video Input & Preprocessing## 1. Video Input & Preprocessing
+
+    style J fill:#e8f5e8
+
+    style K fill:#e3f2fd
+
+```
+
+```python
+
+**Purpose**: Maintain consistent person IDs across frames for timeline analysis.
+
+# Run detection with confidence threshold
+
+---
+
+results = model.predict(frame, conf=0.45, iou=0.5)**Purpose**: Normalize video input for consistent ML processing across different camera types.**Purpose**: Normalize video input for consistent ML processing across different camera types.
+
+## Pose Estimation (MediaPipe)
+
+
+
+```mermaid
+
+flowchart TD# Extract detections
+
+    A[Person Crop] --> B[MediaPipe Pose]
+
+    B --> C[33 Keypoints]for box in results[0].boxes:
+
+    C --> D[Joint Angles]
+
+    C --> E[Body Position]    detection = {**Input Types**:**Input Types**:
+
+    C --> F[Movement Analysis]
+
+            'bbox': [x1, y1, x2, y2],
+
+    D --> G[Shoulder Angle]
+
+    D --> H[Hip Angle]        'class_name': model.names[int(box.cls[0])],- Standard MP4/MOV walkthrough videos (phone/CCTV)- Standard MP4/MOV walkthrough videos (phone/CCTV)
+
+    D --> I[Knee Angle]
+
+            'confidence': float(box.conf[0]),
+
+    E --> J[Standing/Sitting]
+
+    E --> K[Bent Over]        'timestamp': frame_timestamp- 360° factory surveillance videos (equirectangular format)- 360° factory surveillance videos (equirectangular format)
+
+    E --> L[Arms Overhead]
+
+        }
+
+    F --> M[Walking Speed]
+
+    F --> N[Lifting Motion]```
+
+    F --> O[Repetitive Actions]
+
+    
+
+    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8---```python```python
+
+    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8
+
+    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8## 3. Tracking Layer (DeepSORT)# Load and sample video frames at 2 FPS# Load and sample video frames at 2 FPS
+
+    style G fill:#e3f2fd
+
+    style H fill:#e8f5e8
+
+    style I fill:#e3f2fd
+
+    style J fill:#e8f5e8**Purpose**: Maintain consistent person IDs across frames for timeline analysis.cap = cv2.VideoCapture(video_path)cap = cv2.VideoCapture(video_path)
+
+    style K fill:#e3f2fd
+
+    style L fill:#e8f5e8
+
+    style M fill:#e3f2fd
+
+    style N fill:#e8f5e8```pythonsample_interval = int(fps / 2)  # Sample every 0.5 secondssample_interval = int(fps / 2)  # Sample every 0.5 seconds
+
+    style O fill:#e3f2fd
+
+```# Update tracker with new detections
+
+
+
+**Purpose**: Analyze worker posture and movements for safety violations.tracks = tracker.update(detections)
+
+
+
+---
+
+
+
+## Rule Engine (Industry-Specific)# Build person timelinesfor frame_idx in range(0, total_frames, sample_interval):for frame_idx in range(0, total_frames, sample_interval):
+
+
+
+```mermaidfor track in tracks:
+
+flowchart TD
+
+    A[Person Timeline] --> B[Rule Evaluation]    person_timeline[track.track_id].append({    ret, frame = cap.read()    ret, frame = cap.read()
+
+    B --> C[PPE Rules]
+
+    B --> D[Safety Zone Rules]        'bbox': track.bbox,
+
+    B --> E[Posture Rules]
+
+    B --> F[Equipment Rules]        'timestamp': timestamp,    if ret:    if ret:
+
+    
+
+    C --> G[Helmet Required]        'detections': associated_ppe  # PPE items near this person
+
+    C --> H[Vest Required]
+
+    C --> I[Gloves Required]    })        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size        frame = cv2.resize(frame, (640, 640))  # YOLOv8 input size
+
+    
+
+    D --> J[Restricted Areas]```
+
+    D --> K[Emergency Exits]
+
+    D --> L[Hazard Zones]        frame = frame / 255.0  # Normalize to [0,1]        frame = frame / 255.0  # Normalize to [0,1]
+
+    
+
+    E --> M[Safe Lifting]---
+
+    E --> N[Ergonomic Position]
+
+    E --> O[No Overhead Work]        frames.append((frame_idx, timestamp, frame))        frames.append((frame_idx, timestamp, frame))
+
+    
+
+    F --> P[Machinery Safety]## 4. Pose Estimation (MediaPipe)
+
+    F --> Q[Tool Usage]
+
+    F --> R[Emergency Equipment]``````
+
+    
+
+    G --> S[Violation Detection]**Purpose**: Analyze worker posture and movements for safety violations.
+
+    H --> S
+
+    I --> S
+
+    J --> S
+
+    K --> S```python
+
+    L --> S
+
+    M --> S# Extract pose keypoints for each detected person------
+
+    N --> S
+
+    O --> Spose_results = pose_model.process(person_crop)
+
+    P --> S
+
+    Q --> S
+
+    R --> S
+
+    # Analyze key angles and positions
+
+    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8shoulder_angle = calculate_angle(keypoints['left_shoulder'], ## 2. Object Detection Layer (YOLOv8)## 2. Object Detection Layer (YOLOv8)
+
+    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8                               keypoints['left_elbow'], 
+
+    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8                               keypoints['left_wrist'])
+
+    style S fill:#e3f2fd
+
+```
+
+
+
+**Purpose**: Apply business logic to detect compliance violations.# Detect unsafe postures**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.**Purpose**: Identify people, PPE, equipment, hazards, and safety infrastructure.
+
+
+
+---if shoulder_angle > 90:  # Arms raised overhead
+
+
+
+## Evidence Generation & Scoring    violations.append('unsafe_lifting_posture')
+
+
+
+```mermaid```
+
+flowchart TD
+
+    A[Violation Detected] --> B[Extract Video Clip]**Custom Detection Classes**:**Custom Detection Classes**:
+
+    B --> C[2 sec before + 3 sec after]
+
+    C --> D[Generate Thumbnail]---
+
+    D --> E[Encode H.264/avc1]
+
+    E --> F[Save Evidence Files]```yaml```yaml
+
+    
+
+    F --> G[Evidence Database]## 5. Rule Engine (Industry-Specific)
+
+    G --> H[Clip Path]
+
+    G --> I[Thumbnail Path]names:names:
+
+    G --> J[Violation Metadata]
+
+    **Purpose**: Apply business logic to detect compliance violations.
+
+    A --> K[Calculate Compliance Score]
+
+    K --> L[Total Person Minutes]  0: person  0: person
+
+    K --> M[Violation Minutes]
+
+    L --> N[Score = 100 - (violations/total * 100)]```python
+
+    M --> N
+
+    # Manufacturing safety rules  1: helmet  1: helmet
+
+    N --> O[Grade Assignment]
+
+    O --> P[A: 90-100%]rules = {
+
+    O --> Q[B: 80-89%]
+
+    O --> R[C: 70-79%]    'helmet_required': lambda person: has_ppe(person, 'helmet'),  2: vest    2: vest  
+
+    O --> S[F: <70%]
+
+        'vest_required': lambda person: has_ppe(person, 'vest'),
+
+    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8    'no_phones': lambda person: not has_item(person, 'phone'),  3: gloves  3: gloves
+
+    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8    'proper_lifting': lambda person: check_lifting_posture(person)
+
+    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8}  4: mask  4: mask
+
+    style G fill:#e3f2fd
+
+    style H fill:#e8f5e8
+
+    style I fill:#e3f2fd
+
+    style J fill:#e8f5e8# Evaluate each person against rules  5: exit_sign  5: exit_sign
+
+    style K fill:#e3f2fd
+
+    style L fill:#e8f5e8for person_id, timeline in person_timelines.items():
+
+    style M fill:#e3f2fd
+
+    style N fill:#e8f5e8    for frame_data in timeline:  6: fire_extinguisher  6: fire_extinguisher
+
+    style O fill:#e3f2fd
+
+    style P fill:#e8f5e8        for rule_name, rule_func in rules.items():
+
+    style Q fill:#e3f2fd
+
+    style R fill:#e8f5e8            if not rule_func(frame_data):  7: spill  7: spill
+
+    style S fill:#e3f2fd
+
+```                violations.append({
+
+
+
+**Purpose**: Generate visual evidence and calculate compliance score.                    'person_id': person_id,  8: obstruction  8: obstruction
+
+
+
+---                    'rule': rule_name,
+
+
+
+## Deployment Architecture                    'timestamp': frame_data['timestamp'],  9: machinery  9: machinery
+
+
+
+```mermaid                    'bbox': frame_data['bbox']
+
+flowchart TD
+
+    A[Video Upload] --> B[FastAPI Server]                })``````
+
+    B --> C[ML Pipeline Queue]
+
+    C --> D[Video Preprocessing]```
+
+    D --> E[YOLOv8 Detection]
+
+    E --> F[DeepSORT Tracking]
+
+    F --> G[MediaPipe Pose]
+
+    G --> H[Rule Engine]---
+
+    H --> I[Evidence Generation]
+
+    I --> J[Results Storage]```python```python
+
+    J --> K[Web Dashboard]
+
+    ## 6. Evidence Generation & Scoring
+
+    L[Static File Server] --> M[Video Evidence]
+
+    L --> N[Thumbnails]# Run detection with confidence threshold# Run detection with confidence threshold
+
+    L --> O[Report PDFs]
+
+    **Purpose**: Generate visual evidence and calculate compliance score.
+
+    K --> P[Compliance Score]
+
+    K --> Q[Violation List]results = model.predict(frame, conf=0.45, iou=0.5)results = model.predict(frame, conf=0.45, iou=0.5)
+
+    K --> R[Evidence Viewer]
+
+    ```python
+
+    style A fill:#e3f2fd
+
+    style B fill:#e8f5e8# Generate evidence clips for violations
+
+    style C fill:#e3f2fd
+
+    style D fill:#e8f5e8def generate_evidence(violation, video_path):
+
+    style E fill:#e3f2fd
+
+    style F fill:#e8f5e8    start_time = violation['timestamp'] - 2  # 2 sec before# Extract detections# Extract detections
+
+    style G fill:#e3f2fd
+
+    style H fill:#e8f5e8    end_time = violation['timestamp'] + 3    # 3 sec after
+
+    style I fill:#e3f2fd
+
+    style J fill:#e8f5e8    for box in results[0].boxes:for box in results[0].boxes:
+
+    style K fill:#e3f2fd
+
+    style L fill:#e8f5e8    # Extract video clip
+
+    style M fill:#e3f2fd
+
+    style N fill:#e8f5e8    clip = extract_video_segment(video_path, start_time, end_time)    detection = {    detection = {
+
+    style O fill:#e3f2fd
+
+    style P fill:#e8f5e8    
+
+    style Q fill:#e3f2fd
+
+    style R fill:#e8f5e8    # Generate thumbnail        'bbox': [x1, y1, x2, y2],        'bbox': [x1, y1, x2, y2],
+
+```
+
+    thumbnail = extract_frame(video_path, violation['timestamp'])
+
+---
+
+            'class_name': model.names[int(box.cls[0])],        'class_name': model.names[int(box.cls[0])],
+
 ## Output Format
 
-## 3. Tracking Layer (DeepSORT)## 3. Tracking Layer (DeepSORT)
+    return {
 
 ```json
 
-{
+{        'clip_path': save_clip(clip),        'confidence': float(box.conf[0]),        'confidence': float(box.conf[0]),
 
   "analysis_id": "uuid",
 
-  "video_info": {**Purpose**: Maintain consistent person IDs across frames for timeline analysis.**Purpose**: Maintain consistent person IDs across frames for timeline analysis.
+  "video_info": {        'thumbnail_path': save_thumbnail(thumbnail),
 
     "filename": "factory_tour.mp4",
 
-    "duration": 120.5,
+    "duration": 120.5,        'description': violation['rule']        'timestamp': frame_timestamp        'timestamp': frame_timestamp
 
     "total_frames": 3612
 
-  },```python```python
+  },    }
 
   "compliance_score": {
 
-    "score": 78.5,# Update tracker with new detections# Update tracker with new detections
+    "score": 78.5,    }    }
 
     "grade": "B",
 
-    "total_violations": 12tracks = tracker.update(detections)tracks = tracker.update(detections)
+    "total_violations": 12# Calculate compliance score
 
   },
 
-  "violations": [
+  "violations": [total_person_minutes = sum(timeline_duration for timeline in person_timelines.values())``````
 
     {
 
-      "id": "V-001",# Build person timelines# Build person timelines
+      "id": "V-001",violation_minutes = sum(violation_duration for violation in violations)
 
       "type": "missing_helmet",
 
-      "person_id": "person_3",for track in tracks:for track in tracks:
+      "person_id": "person_3",compliance_score = max(0, 100 - (violation_minutes / total_person_minutes * 100))
 
       "timestamp": 45.2,
 
-      "confidence": 0.89,    person_timeline[track.track_id].append({    person_timeline[track.track_id].append({
+      "confidence": 0.89,```
 
       "evidence": {
 
-        "thumbnail": "/outputs/thumb_V-001.jpg",        'bbox': track.bbox,        'bbox': track.bbox,
+        "thumbnail": "/outputs/thumb_V-001.jpg",------
+
+        "clip": "/outputs/clip_V-001.mp4"
+
+      }---
+
+    }
+
+  ],
+
+  "summary": {
+
+    "people_detected": 8,## Output Format
+
+    "avg_compliance_time": 0.785,
+
+    "most_common_violation": "missing_helmet"## 3. Tracking Layer (DeepSORT)## 3. Tracking Layer (DeepSORT)
+
+  }
+
+}```json
+
+```
+
+{
+
+---
+
+  "analysis_id": "uuid",
+
+## Technical Implementation
+
+  "video_info": {**Purpose**: Maintain consistent person IDs across frames for timeline analysis.**Purpose**: Maintain consistent person IDs across frames for timeline analysis.
+
+### Model Requirements
+
+- **YOLOv8**: Object detection (persons, PPE, hazards)    "filename": "factory_tour.mp4",
+
+- **DeepSORT**: Multi-object tracking across frames  
+
+- **MediaPipe**: Human pose estimation    "duration": 120.5,
+
+- **OpenCV**: Video processing and preprocessing
+
+    "total_frames": 3612
+
+### Performance Specifications
+
+- **Processing Speed**: 2 FPS real-time analysis  },```python```python
+
+- **Input Resolution**: 640x640 (optimized for inference)
+
+- **Detection Accuracy**: >90% for persons, >85% for PPE  "compliance_score": {
+
+- **Supported Formats**: MP4, MOV, AVI (standard + 360°)
+
+    "score": 78.5,# Update tracker with new detections# Update tracker with new detections
+
+### Industry Rule Sets
+
+- **Manufacturing**: Helmet, vest, gloves, safety zones    "grade": "B",
+
+- **Construction**: Hard hat, harness, restricted areas  
+
+- **Food Processing**: Hairnet, gloves, apron, hygiene    "total_violations": 12tracks = tracker.update(detections)tracks = tracker.update(detections)
+
+- **Healthcare**: Mask, gloves, proper PPE protocols
+
+  },
+
+### API Integration
+
+```python  "violations": [
+
+# Upload video for analysis
+
+POST /upload    {
+
+{
+
+  "video": file,      "id": "V-001",# Build person timelines# Build person timelines
+
+  "industry_pack": "manufacturing"
+
+}      "type": "missing_helmet",
+
+
+
+# Get analysis results        "person_id": "person_3",for track in tracks:for track in tracks:
+
+GET /analysis/{analysis_id}
+
+{      "timestamp": 45.2,
+
+  "status": "complete",
+
+  "compliance_score": 78.5,      "confidence": 0.89,    person_timeline[track.track_id].append({    person_timeline[track.track_id].append({
+
+  "violations": [...],
+
+  "evidence": [...]      "evidence": {
+
+}
+
+```        "thumbnail": "/outputs/thumb_V-001.jpg",        'bbox': track.bbox,        'bbox': track.bbox,
 
         "clip": "/outputs/clip_V-001.mp4"
 
