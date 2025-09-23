@@ -1,15 +1,59 @@
 # Visual Workflow: Nodes and Edges
 
-This file describes the pipeline strictly as nodes and edges. It contains:
-- A single Mermaid flowchart showing the DAG
-- A plain adjacency list for clarity
+This file provides multiple visual representations of the compliance analysis pipeline to ensure visibility regardless of rendering support.
 
 ---
 
-## Graph
+## ASCII Flow Diagram
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ Video Input │───▶│ Preprocess  │───▶│  Detection  │───▶│  Tracking   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+                                           │                      │
+                                           ▼                      ▼
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Output    │◀───│   Scoring   │◀───│  Evidence   │◀───│    Pose     │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+                                           ▲                      │
+                                           │                      ▼
+                                    ┌─────────────┐    ┌─────────────┐
+                                    │  Temporal   │◀───│    Rules    │
+                                    └─────────────┘    └─────────────┘
+```
+
+---
+
+## Simple Text Flow
+
+```
+Video Input 
+    ↓
+Preprocess (Resize, Sample 2 FPS)
+    ↓
+Detection (YOLOv8: Persons, PPE, Hazards)
+    ↓
+Tracking (DeepSORT: Assign Track IDs)
+    ↓
+Pose (MediaPipe: 33 keypoints)
+    ↓
+Rules (Industry-specific compliance checks)
+    ↓
+Temporal (Multi-frame reasoning)
+    ↓
+Evidence (Generate H264/avc1 clips + thumbnails)
+    ↓
+Scoring (Calculate compliance percentage)
+    ↓
+Output (JSON + Web UI)
+```
+
+---
+
+## Mermaid Graph (Fallback)
 
 ```mermaid
-flowchart TD
+graph TD
     A[Video Input] --> B[Preprocess]
     B --> C[Detection]
     C --> D[Tracking]
@@ -34,30 +78,38 @@ flowchart TD
 
 ---
 
-## Adjacency List
+## Node Details
 
-```
-A -> B
-B -> C
-C -> D
-D -> E
-E -> F
-F -> G
-G -> H
-H -> I
-I -> J
-```
+| Node | Description | Technology |
+|------|-------------|------------|
+| A | Video Input | MP4/MOV/360° |
+| B | Preprocess | OpenCV resize/sample |
+| C | Detection | YOLOv8 object detection |
+| D | Tracking | DeepSORT multi-object tracking |
+| E | Pose | MediaPipe pose estimation |
+| F | Rules | Industry-specific rule engine |
+| G | Temporal | Multi-frame violation analysis |
+| H | Evidence | H264/avc1 clip generation |
+| I | Scoring | Compliance percentage calculation |
+| J | Output | JSON results + Web UI |
 
 ---
 
-Legend
-- Detection = YOLOv8
-- Tracking = DeepSORT
-- Pose = MediaPipe
-- Rules = Rule Engine
-- Temporal = Temporal reasoning
-- Evidence = Evidence generation H264 avc1
-- Output = JSON and UI
+## Adjacency Matrix
+
+```
+     A B C D E F G H I J
+A    0 1 0 0 0 0 0 0 0 0
+B    0 0 1 0 0 0 0 0 0 0  
+C    0 0 0 1 0 0 0 0 0 0
+D    0 0 0 0 1 0 0 0 0 0
+E    0 0 0 0 0 1 0 0 0 0
+F    0 0 0 0 0 0 1 0 0 0
+G    0 0 0 0 0 0 0 1 0 0
+H    0 0 0 0 0 0 0 0 1 0
+I    0 0 0 0 0 0 0 0 0 1
+J    0 0 0 0 0 0 0 0 0 0
+```
 # Compliance Analysis Workflow (Visual)# Compliance Analysis Workflow (Visual)
 
 
